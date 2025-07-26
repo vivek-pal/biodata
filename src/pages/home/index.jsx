@@ -116,9 +116,9 @@ const HomePage = () => {
 
     const stages = [
       "validation",
-      "extraction",
-      "analysis",
-      "matching",
+    //   "extraction",
+    //   "analysis",
+    //   "matching",
       "complete",
     ];
 

@@ -14,9 +14,9 @@ const ProcessingStatus = ({
   const processingStages = [
     { id: 'upload', label: 'File Upload', icon: 'Upload' },
     { id: 'validation', label: 'Document Validation', icon: 'CheckCircle' },
-    { id: 'extraction', label: 'Data Extraction', icon: 'FileText' },
-    { id: 'analysis', label: 'AI Analysis', icon: 'Brain' },
-    { id: 'matching', label: 'Profile Matching', icon: 'Users' },
+    // { id: 'extraction', label: 'Data Extraction', icon: 'FileText' },
+    // { id: 'analysis', label: 'AI Analysis', icon: 'Brain' },
+    // { id: 'matching', label: 'Profile Matching', icon: 'Users' },
     { id: 'complete', label: 'Processing Complete', icon: 'CheckCircle2' }
   ];
 
