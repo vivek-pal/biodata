@@ -6,7 +6,7 @@ import Login from "./pages/login";
 
 const Routes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/biodata">
       <RouterRoutes>
         <Route path="/" element={<HomePage />} />
         <Route path="/dashboard" element={<Dashboard />} />
