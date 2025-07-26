@@ -1,7 +1,5 @@
 import React from 'react';
 import Header from '../../components/ui/Header';
-import Breadcrumb from '../../components/ui/Breadcrumb';
-// import WelcomeHeader from './components/WelcomeHeader';
 import PreferencesSection from './components/PreferencesSection';
 import AIPromptSection from './components/AIPromptSection';
 import HistorySection from './components/HistorySection';

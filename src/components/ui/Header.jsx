@@ -12,7 +12,7 @@ const Header = () => {
               <Icon name="Heart" size={20} color="white" />
             </div>
             <div className="hidden sm:block">
-              <h1 className="text-lg font-semibold text-foreground">Bio Data</h1>
+              <h1 className="text-lg font-semibold text-foreground">Bio data matching</h1>
             </div>
           </div>
         </div>

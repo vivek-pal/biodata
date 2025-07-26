@@ -7,8 +7,9 @@ const Login = () => {
   const [activeTab, setActiveTab] = useState('login');
   const navigate = useNavigate();
 
-  const handleLoginSuccess = () => {
-    navigate('/dashboard');
+  const handleLoginSuccess = (mobileNumber) => {
+    localStorage.setItem("login_mobile", mobileNumber); // Simulate successful login
+    navigate('/');
   };
 
   return (

@@ -74,7 +74,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     // Simulate API call
     setTimeout(() => {
       setLoading(false);
-      onLoginSuccess();
+      onLoginSuccess(mobileNumber);
     }, 1500);
   };
 

@@ -32,7 +32,7 @@ const CountryCodeSelector = ({ selectedCountry, onCountryChange }) => {
       <button
         type="button"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center space-x-2 px-3 py-3 bg-input border border-border rounded-lg hover:bg-muted transition-smooth min-w-[100px]"
+        className="flex items-center space-x-2 px-3 py-3 bg-input border border-border rounded-lg hover:bg-muted transition-smooth min-w-[100px] h-[42px]"
       >
         <span className="text-lg">{selectedCountry.flag}</span>
         <span className="text-sm font-medium text-foreground">{selectedCountry.code}</span>
