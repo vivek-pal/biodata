@@ -1,25 +1,51 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Icon from "../AppIcon";
 import { Menu, User } from "lucide-react";
-import {
-  FileText,
-  DollarSign,
-  HelpCircle,
-  LogOut,
-  LogIn
-} from "lucide-react";
+import { FileText, DollarSign, HelpCircle, LogOut, LogIn } from "lucide-react";
+import { toast } from "sonner";
+import { useUser } from "../../context/userContext";
+import LoginForm from "../../pages/home/components/LoginForm";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const handleMenuClick = () => { }
+  const { userState, updateUser } = useUser();
+  const [isLoginOpen, setIsLoginOpen] = useState(false);
 
-  const menuItems = [
+  const defaultMenuItems = [
     { icon: DollarSign, label: "Pricing", href: "/#/payment" },
     { icon: HelpCircle, label: "Help & Support", href: "/#/help" },
     { icon: FileText, label: "Terms & Conditions", href: "/#/policy" },
-    { icon: LogOut, label: "Logout", href: "#",  handler: handleMenuClick },
-    { icon: LogIn, label: "Login", href: "#", handler: handleMenuClick },
+    // { icon: LogIn, label: "Login", href: "/#/login", id: "login" },
   ];
+
+  const [menuItems, setMenuItems] = useState(defaultMenuItems);
+
+  useEffect(() => {
+    setMenuItems((prevItems) => {
+      // Remove existing login/logout item
+      const filteredItems = prevItems.filter(
+        (item) => item.id !== "login" && item.id !== "logout"
+      );
+
+      // Add the appropriate item
+      const newItem = userState.isLoggedIn
+        ? {
+            id: "logout",
+            icon: LogOut,
+            label: "Logout",
+            href: "/#/login",
+          }
+        : {
+            id: "login",
+            icon: LogIn,
+            label: "Login",
+            href: "/#/login",
+          };
+
+      return [...filteredItems, newItem];
+    });
+  }, [userState.isLoggedIn]);
+
   return (
     <header className="fixed top-0 left-0 right-0 bg-card border-b border-border z-100">
       <div className="max-w-7xl mx-auto h-16 flex items-center justify-between">
@@ -27,9 +53,7 @@ const Header = () => {
         <div className="flex items-center gap-1 sm:gap-2">
           <div className="flex items-center gap-1 sm:gap-2">
             <Icon name="FileUser" size={20} />
-            <span className="text-lg sm:text-xl font-bold text-black">
-              JD
-            </span>
+            <span className="text-lg sm:text-xl font-bold text-black">JD</span>
             {/* <span className="bg-gray-100 text-gray-600 text-xs px-1.5 sm:px-2 py-1 rounded font-medium">
               Matching
             </span> */}
@@ -39,7 +63,7 @@ const Header = () => {
         {/* Navigation */}
         <div className="flex items-center gap-2 sm:gap-4">
           <span className="text-gray-700 font-medium hidden md:block">
-            Welcome
+            Welcome {userState.userName ? userState.userName : "Guest"}
           </span>
           <button
             className="w-9 h-9 sm:w-10 sm:h-10  rounded-lg flex items-center justify-center  transition-colors touch-manipulation"
@@ -67,7 +91,13 @@ const Header = () => {
                   <h3 className="font-medium text-gray-900 text-sm">
                     User Account
                   </h3>
-                  <p className="text-xs text-gray-500">user@example.com</p>
+                  <p className="text-xs text-gray-500">
+                    {userState.mobileNumber && (
+                      <p>
+                        {userState.countryCode} {userState.mobileNumber}
+                      </p>
+                    )}
+                  </p>
                 </div>
               </div>
             </div>
@@ -76,15 +106,28 @@ const Header = () => {
               {menuItems.map((item, index) => (
                 <a
                   key={index}
+                  id={item.id}
                   href={item.href}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm"
                   onClick={(e) => {
-                    e.preventDefault();
+                    if (e.target.id === "login" || e.target.id === "logout") {
+                      e.preventDefault();
+
+                      if (e.target.id === "logout") {
+                        updateUser({ isLoggedIn: false, mobileNumber: "" });
+                        toast.success("Logged out successfully");
+                      } else {
+                        setIsLoginOpen(true);
+                      }
+                    }
+
                     setIsMenuOpen(false);
                   }}
                 >
                   <item.icon className="w-4 h-4 text-gray-500" />
-                  <span className="font-medium">{item.label}</span>
+                  <span className="font-medium" id={item.id}>
+                    {item.label}
+                  </span>
                 </a>
               ))}
             </div>
@@ -97,6 +140,7 @@ const Header = () => {
           </div>
         </>
       )}
+      {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
     </header>
   );
 };

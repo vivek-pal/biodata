@@ -10,38 +10,29 @@ import {
   X,
   FileText,
   DollarSign,
-  HelpCircle,
-  Settings,
   LogOut,
   LogIn,
   Upload,
   Image,
-  Phone,
-  Shield,
-  Check,
-  Clock,
   File,
   Settings2,
-  MoveRight,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { toast } from "sonner";
 import LoginForm from "./components/LoginForm";
+import { useUser } from "../../context/userContext";
+import PreferenceForm from "./components/Preference";
 
 const HomePage = () => {
   const navigate = useNavigate();
 
+  const { userState, updateUser } = useUser();
+
   const [selectedType, setSelectedType] = useState("Web App");
   const [inputText, setInputText] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
+  const [isShowPreference, setIsShowPreference] = useState(false);
   const [isAttachOpen, setIsAttachOpen] = useState(false);
-  const [loginStep, setLoginStep] = useState("phone"); // "phone" | "otp" | "success"
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [pinNumber, setPINNumber] = useState("");
-  const [otp, setOtp] = useState("");
-  const [countryCode, setCountryCode] = useState("+91");
-  const [otpTimer, setOtpTimer] = useState(60);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [isDragOver, setIsDragOver] = useState(false);
   const [messages, setMessages] = useState([
@@ -57,7 +48,6 @@ const HomePage = () => {
       isUser: false,
       timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
     },
-    
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -210,18 +200,6 @@ const HomePage = () => {
     navigator.clipboard.writeText(text);
     toast.success("Message copied to clipboard");
   };
-
-  const formatTime = (date) => {
-    return date.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
-  };
-
-  const menuItems = [
-    { icon: FileText, label: "Terms & Conditions", href: "#" },
-    { icon: DollarSign, label: "Pricing", href: "#" },
-    { icon: HelpCircle, label: "Help & Support", href: "#" },
-    { icon: Settings, label: "Settings", href: "#" },
-    { icon: LogOut, label: "Sign Out", href: "#" },
-  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -420,7 +398,6 @@ const HomePage = () => {
                     message.isUser ? "ml-auto justify-end" : "mr-auto"
                   )}
                 >
-
                   <div
                     className={cn(
                       "rounded-2xl px-4 py-3 group relative",
@@ -525,7 +502,10 @@ const HomePage = () => {
         </div>
 
         {/* Bottom Input Area */}
-        <div className="flex-shrink-0 bg-white p-3 sm:p-4" style={{paddingBottom: "41px"}}>
+        <div
+          className="flex-shrink-0 bg-white p-3 sm:p-4"
+          style={{ paddingBottom: "41px" }}
+        >
           <div className="max-w-4xl mx-auto">
             {/* Attached Files Preview */}
             {attachedFiles.length > 0 && (
@@ -643,35 +623,37 @@ const HomePage = () => {
 
                   {/* Paperclip Button */}
 
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                     onClick={() => setIsAttachOpen(!isAttachOpen)}
-                  >
-                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Attach
-                    </span>
-                  </Button>
+                  {!userState.isProfileUploaded ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() => setIsAttachOpen(!isAttachOpen)}
+                    >
+                      <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Attach
+                      </span>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    >
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Profile
+                      </span>
+                    </Button>
+                  )}
 
-                  {/* File/Document Button */}
+                  {/* Topup Button */}
                   <Button
                     variant="ghost"
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                  >
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Profile
-                    </span>
-                  </Button>
-
-                     {/* Topup Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    onClick={() => navigate("/payment")}
                   >
                     <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
@@ -679,11 +661,12 @@ const HomePage = () => {
                     </span>
                   </Button>
 
-                   {/* Preference Button */}
+                  {/* Preference Button */}
                   <Button
                     variant="ghost"
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    onClick={() =>setIsShowPreference(!isShowPreference) }
                   >
                     <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
@@ -692,29 +675,34 @@ const HomePage = () => {
                   </Button>
 
                   {/* Login/Profile Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => setIsLoginOpen(!isLoginOpen)}
-                  >
-                    <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Login
-                    </span>
-                  </Button>
-
-                   <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => setIsLoginOpen(!isLoginOpen)}
-                  >
-                    <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Logout
-                    </span>
-                  </Button>
+                  {!userState.isLoggedIn ? (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() => setIsLoginOpen(!isLoginOpen)}
+                    >
+                      <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Login
+                      </span>
+                    </Button>
+                  ) : (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() => {
+                        updateUser({ isLoggedIn: false, mobileNumber: "" });
+                        toast.success("Logged out successfully");
+                      }}
+                    >
+                      <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Logout
+                      </span>
+                    </Button>
+                  )}
                 </div>
 
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
@@ -761,9 +749,7 @@ const HomePage = () => {
                       <span className="text-sm font-medium">
                         Upload Documents
                       </span>
-                      <p className="text-xs text-gray-500">
-                        PDF, DOC
-                      </p>
+                      <p className="text-xs text-gray-500">PDF, DOC</p>
                     </div>
                   </button>
 
@@ -788,8 +774,6 @@ const HomePage = () => {
                     </div>
                   </button>
 
-                  
-
                   <div className="border-t border-gray-100 pt-2 mt-2">
                     <div className="text-xs text-gray-500 px-3 py-1">
                       Maximum file size: 10MB per file
@@ -802,15 +786,14 @@ const HomePage = () => {
         )}
 
         {/* Mobile Login Popup */}
-        {isLoginOpen && (
-          <LoginForm setIsLoginOpen={setIsLoginOpen} />
-        )}
+        {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
+        {/* Preference Popup */}
+        {isShowPreference && <PreferenceForm setIsShowPreference={setIsShowPreference} />}
       </main>
 
-    <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
+      <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
         Copyright &copy; 2025 JD All rights reserved.
       </footer>
-
     </div>
   );
 };

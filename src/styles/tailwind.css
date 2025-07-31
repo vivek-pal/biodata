@@ -117,3 +117,7 @@
 .text-default-color:hover {
   color: #2c5791;
 }
+
+.bg-primary {
+  background-color: #2c5791;
+}
