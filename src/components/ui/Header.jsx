@@ -2,33 +2,23 @@ import React, { useState } from "react";
 import Icon from "../AppIcon";
 import { Menu, User } from "lucide-react";
 import {
-  Paperclip,
-  ArrowUp,
-  X,
   FileText,
   DollarSign,
   HelpCircle,
-  Settings,
   LogOut,
-  LogIn,
-  Upload,
-  Image,
-  Phone,
-  Shield,
-  Check,
-  Clock,
-  File,
-  Trash2,
-  Download,
+  LogIn
 } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const handleMenuClick = () => { }
+
   const menuItems = [
-    { icon: DollarSign, label: "Pricing", href: "#" },
-    { icon: HelpCircle, label: "Help & Support", href: "#" },
-    { icon: FileText, label: "Terms & Conditions", href: "#" },
-    // { icon: LogOut, label: "Sign Out", href: "#" },
+    { icon: DollarSign, label: "Pricing", href: "/#/payment" },
+    { icon: HelpCircle, label: "Help & Support", href: "/#/help" },
+    { icon: FileText, label: "Terms & Conditions", href: "/#/policy" },
+    { icon: LogOut, label: "Logout", href: "#",  handler: handleMenuClick },
+    { icon: LogIn, label: "Login", href: "#", handler: handleMenuClick },
   ];
   return (
     <header className="fixed top-0 left-0 right-0 bg-card border-b border-border z-100">
@@ -36,13 +26,13 @@ const Header = () => {
         {/* Logo */}
         <div className="flex items-center gap-1 sm:gap-2">
           <div className="flex items-center gap-1 sm:gap-2">
-            <Icon name="Heart" size={20} />
+            <Icon name="FileUser" size={20} />
             <span className="text-lg sm:text-xl font-bold text-black">
-              Bio data
+              JD
             </span>
-            <span className="bg-gray-100 text-gray-600 text-xs px-1.5 sm:px-2 py-1 rounded font-medium">
+            {/* <span className="bg-gray-100 text-gray-600 text-xs px-1.5 sm:px-2 py-1 rounded font-medium">
               Matching
-            </span>
+            </span> */}
           </div>
         </div>
 

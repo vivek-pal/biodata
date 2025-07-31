@@ -21,9 +21,12 @@ import {
   Check,
   Clock,
   File,
+  Settings2,
+  MoveRight,
 } from "lucide-react";
 import { cn } from "../../utils/cn";
 import { toast } from "sonner";
+import LoginForm from "./components/LoginForm";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -34,8 +37,9 @@ const HomePage = () => {
   const [isAttachOpen, setIsAttachOpen] = useState(false);
   const [loginStep, setLoginStep] = useState("phone"); // "phone" | "otp" | "success"
   const [phoneNumber, setPhoneNumber] = useState("");
+  const [pinNumber, setPINNumber] = useState("");
   const [otp, setOtp] = useState("");
-  const [countryCode, setCountryCode] = useState("+1");
+  const [countryCode, setCountryCode] = useState("+91");
   const [otpTimer, setOtpTimer] = useState(60);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
@@ -60,7 +64,7 @@ const HomePage = () => {
   const projectTypes = ["Web App", "Mobile App", "Internal Tool", "Website"];
 
   // File handling functions
-  const handleFileUpload = () => {
+  const handleFileUpload = (files) => {
     if (!files) return;
 
     Array.from(files).forEach((file) => {
@@ -222,7 +226,7 @@ const HomePage = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      <main className="flex flex-col h-screen bg-gray-50">
+      <main className="flex flex-col h-screen bg-white">
         {/* Chat Messages Area */}
         <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4">
           <div className="max-w-4xl mx-auto">
@@ -420,7 +424,7 @@ const HomePage = () => {
                   <div
                     className={cn(
                       "rounded-2xl px-4 py-3 group relative",
-                      message.isUser ? "bg-gray-100 " : "bg-white"
+                      message.isUser ? "border-left " : "border-right"
                     )}
                   >
                     {message.files && message.files.length > 0 && (
@@ -521,7 +525,7 @@ const HomePage = () => {
         </div>
 
         {/* Bottom Input Area */}
-        <div className="flex-shrink-0 bg-white p-3 sm:p-4">
+        <div className="flex-shrink-0 bg-white p-3 sm:p-4" style={{paddingBottom: "41px"}}>
           <div className="max-w-4xl mx-auto">
             {/* Attached Files Preview */}
             {attachedFiles.length > 0 && (
@@ -568,8 +572,8 @@ const HomePage = () => {
 
             <div
               className={cn(
-                "bg-gray-50 rounded-xl border border-gray-200 transition-colors",
-                isDragOver && "border-blue-500 bg-blue-50"
+                "rounded-xl border transition-colors border-textbox-color",
+                isDragOver && " bg-blue-50"
               )}
               onDragOver={(e) => {
                 e.preventDefault();
@@ -598,7 +602,7 @@ const HomePage = () => {
                   </div>
                 )}
                 <textarea
-                  placeholder="Ask me anything..."
+                  placeholder="Ask me anything about your job..."
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   onKeyPress={(e) => {
@@ -643,8 +647,9 @@ const HomePage = () => {
                     variant="ghost"
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                     onClick={() => setIsAttachOpen(!isAttachOpen)}
                   >
-                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
                       Attach
                     </span>
@@ -656,9 +661,33 @@ const HomePage = () => {
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
                   >
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
                       Profile
+                    </span>
+                  </Button>
+
+                     {/* Topup Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                  >
+                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <span className="text-sm sm:text-base text-gray-700">
+                      Topup
+                    </span>
+                  </Button>
+
+                   {/* Preference Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                  >
+                    <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <span className="text-sm sm:text-base text-gray-700">
+                      Preference
                     </span>
                   </Button>
 
@@ -669,9 +698,21 @@ const HomePage = () => {
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
                     onClick={() => setIsLoginOpen(!isLoginOpen)}
                   >
-                    <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                    <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
                       Login
+                    </span>
+                  </Button>
+
+                   <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    onClick={() => setIsLoginOpen(!isLoginOpen)}
+                  >
+                    <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <span className="text-sm sm:text-base text-gray-700">
+                      Logout
                     </span>
                   </Button>
                 </div>
@@ -679,7 +720,7 @@ const HomePage = () => {
                 <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
                   {/* Send Button */}
                   <Button
-                    className="bg-blue-500 hover:bg-blue-600 text-white rounded-xl w-9 h-9 sm:w-10 sm:h-10 p-0 touch-manipulation"
+                    className="text-default-color text-default-color:hover text-white rounded-xl w-9 h-9 sm:w-10 sm:h-10 p-0 touch-manipulation"
                     disabled={!inputText.trim() || isLoading}
                     onClick={sendMessage}
                   >
@@ -700,19 +741,28 @@ const HomePage = () => {
             />
             <div className="fixed bottom-24 sm:bottom-28 left-2 sm:left-8 right-2 sm:right-auto w-auto sm:w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
               <div className="p-4">
-                <h3 className="font-medium text-gray-900 mb-3">Attach Files</h3>
+                <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
                 <div className="space-y-2">
                   <button
-                    onClick={() =>
-                      document.getElementById("file-upload")?.click()
-                    }
+                    onClick={() => {
+                      const input = document.createElement("input");
+                      input.type = "file";
+                      input.accept =
+                        ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
+                      input.multiple = true;
+                      input.onchange = (e) => handleFileUpload(e.target.files);
+                      input.click();
+                      setIsAttachOpen(false);
+                    }}
                     className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
                   >
-                    <Upload className="w-4 h-4 text-blue-500" />
+                    <FileText className="w-4 h-4 text-orange-500" />
                     <div>
-                      <span className="text-sm font-medium">Upload Files</span>
+                      <span className="text-sm font-medium">
+                        Upload Documents
+                      </span>
                       <p className="text-xs text-gray-500">
-                        Images, documents, videos
+                        PDF, DOC
                       </p>
                     </div>
                   </button>
@@ -738,29 +788,7 @@ const HomePage = () => {
                     </div>
                   </button>
 
-                  <button
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept =
-                        ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
-                      input.multiple = true;
-                      input.onchange = (e) => handleFileUpload(e.target.files);
-                      input.click();
-                      setIsAttachOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    <FileText className="w-4 h-4 text-orange-500" />
-                    <div>
-                      <span className="text-sm font-medium">
-                        Upload Documents
-                      </span>
-                      <p className="text-xs text-gray-500">
-                        PDF, Word, Excel, PowerPoint
-                      </p>
-                    </div>
-                  </button>
+                  
 
                   <div className="border-t border-gray-100 pt-2 mt-2">
                     <div className="text-xs text-gray-500 px-3 py-1">
@@ -775,225 +803,14 @@ const HomePage = () => {
 
         {/* Mobile Login Popup */}
         {isLoginOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-40 bg-black/20"
-              onClick={() => {
-                setIsLoginOpen(false);
-                setLoginStep("phone");
-                setPhoneNumber("");
-                setOtp("");
-              }}
-            />
-            <div className="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] max-w-md sm:w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 max-h-[90vh] overflow-y-auto">
-              <div className="p-6">
-                {/* Header */}
-                <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-xl font-semibold text-gray-900">
-                    {loginStep === "phone" && "Login with Mobile"}
-                    {loginStep === "otp" && "Verify OTP"}
-                    {loginStep === "success" && "Welcome!"}
-                  </h3>
-                  <button
-                    onClick={() => {
-                      setIsLoginOpen(false);
-                      setLoginStep("phone");
-                      setPhoneNumber("");
-                      setOtp("");
-                    }}
-                    className="w-8 h-8 flex items-center justify-center rounded-lg hover:bg-gray-100 transition-colors"
-                  >
-                    <X className="w-5 h-5 text-gray-500" />
-                  </button>
-                </div>
-
-                {/* Phone Number Step */}
-                {loginStep === "phone" && (
-                  <div className="space-y-4">
-                    <div className="text-center mb-6">
-                      <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Phone className="w-8 h-8 text-blue-600" />
-                      </div>
-                      <p className="text-gray-600">
-                        Enter your mobile number to receive a verification code
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 block mb-2">
-                        Mobile Number
-                      </label>
-                      <div className="flex gap-2">
-                        <select
-                          value={countryCode}
-                          onChange={(e) => setCountryCode(e.target.value)}
-                          className="px-2 sm:px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm sm:text-base"
-                        >
-                          <option value="+1">🇺🇸 +1</option>
-                          <option value="+91">🇮🇳 +91</option>
-                          <option value="+44">🇬🇧 +44</option>
-                          <option value="+86">🇨🇳 +86</option>
-                        </select>
-                        <input
-                          type="tel"
-                          value={phoneNumber}
-                          onChange={(e) =>
-                            setPhoneNumber(
-                              e.target.value.replace(/\D/g, "").slice(0, 10)
-                            )
-                          }
-                          className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                          placeholder="Enter mobile number"
-                        />
-                      </div>
-                    </div>
-
-                    <Button
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base"
-                      disabled={phoneNumber.length < 10}
-                      onClick={() => {
-                        setLoginStep("otp");
-                        setOtpTimer(60);
-                        // Start timer
-                        const timer = setInterval(() => {
-                          setOtpTimer((prev) => {
-                            if (prev <= 1) {
-                              clearInterval(timer);
-                              return 0;
-                            }
-                            return prev - 1;
-                          });
-                        }, 1000);
-                      }}
-                    >
-                      <Phone className="w-5 h-5 mr-2" />
-                      Send OTP
-                    </Button>
-
-                    <div className="text-center">
-                      <p className="text-xs text-gray-500">
-                        By continuing, you agree to our Terms of Service and
-                        Privacy Policy
-                      </p>
-                    </div>
-                  </div>
-                )}
-
-                {/* OTP Verification Step */}
-                {loginStep === "otp" && (
-                  <div className="space-y-4">
-                    <div className="text-center mb-6">
-                      <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <Shield className="w-8 h-8 text-green-600" />
-                      </div>
-                      <p className="text-gray-600">
-                        We've sent a 6-digit code to
-                      </p>
-                      <p className="font-medium text-gray-900">
-                        {countryCode} {phoneNumber}
-                      </p>
-                    </div>
-
-                    <div>
-                      <label className="text-sm font-medium text-gray-700 block mb-2">
-                        Enter OTP
-                      </label>
-                      <input
-                        type="text"
-                        value={otp}
-                        onChange={(e) =>
-                          setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))
-                        }
-                        className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-center text-xl tracking-widest"
-                        placeholder="000000"
-                        maxLength={6}
-                      />
-                    </div>
-
-                    <Button
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 text-base"
-                      disabled={otp.length !== 6}
-                      onClick={() => {
-                        setLoginStep("success");
-                        setIsLoggedIn(true);
-                        setTimeout(() => {
-                          setIsLoginOpen(false);
-                          setLoginStep("phone");
-                          setPhoneNumber("");
-                          setOtp("");
-                        }, 2000);
-                      }}
-                    >
-                      <Shield className="w-5 h-5 mr-2" />
-                      Verify & Login
-                    </Button>
-
-                    <div className="flex items-center justify-between text-sm">
-                      <button
-                        className="text-blue-600 hover:text-blue-700 font-medium"
-                        onClick={() => setLoginStep("phone")}
-                      >
-                        ← Change Number
-                      </button>
-
-                      {otpTimer > 0 ? (
-                        <div className="flex items-center text-gray-500">
-                          <Clock className="w-4 h-4 mr-1" />
-                          Resend in {otpTimer}s
-                        </div>
-                      ) : (
-                        <button
-                          className="text-blue-600 hover:text-blue-700 font-medium"
-                          onClick={() => {
-                            setOtpTimer(60);
-                            const timer = setInterval(() => {
-                              setOtpTimer((prev) => {
-                                if (prev <= 1) {
-                                  clearInterval(timer);
-                                  return 0;
-                                }
-                                return prev - 1;
-                              });
-                            }, 1000);
-                          }}
-                        >
-                          Resend OTP
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                )}
-
-                {/* Success Step */}
-                {loginStep === "success" && (
-                  <div className="text-center space-y-4">
-                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto">
-                      <Check className="w-8 h-8 text-green-600" />
-                    </div>
-                    <h4 className="text-lg font-semibold text-gray-900">
-                      Login Successful!
-                    </h4>
-                    <p className="text-gray-600">
-                      Welcome back! You're now logged in.
-                    </p>
-                    <div className="flex items-center justify-center space-x-2 text-green-600">
-                      <div className="w-2 h-2 bg-green-600 rounded-full animate-bounce"></div>
-                      <div
-                        className="w-2 h-2 bg-green-600 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-green-600 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
+          <LoginForm setIsLoginOpen={setIsLoginOpen} />
         )}
       </main>
+
+    <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
+        Copyright &copy; 2025 JD All rights reserved.
+      </footer>
+
     </div>
   );
 };
