@@ -10,7 +10,7 @@ import { Link } from "react-router-dom";
 
 const Header = ({isChild}) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { userState, updateUser } = useUser();
+  const { userState, resetUser } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const defaultMenuItems = [
@@ -117,7 +117,7 @@ const Header = ({isChild}) => {
                       e.preventDefault();
 
                       if (e.target.id === "logout") {
-                        updateUser({ isLoggedIn: false, mobileNumber: "" });
+                        resetUser()
                         toast.success("Logged out successfully");
                       } else {
                         setIsLoginOpen(true);

@@ -3,7 +3,7 @@ export async function fetchData(url) {
     const response = await fetch(url);
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+        return await response.text(); 
     }
 
     const data = await response.text(); // or .json() for JSON responses
@@ -25,7 +25,8 @@ export async function postData(url, payload) {
     });
 
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+        const text = await response.text();
+      return { error: true, message: JSON.parse(text)?.message }; ; 
     }
 
     const data = await response.json(); // or .text() if expecting HTML

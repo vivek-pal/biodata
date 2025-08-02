@@ -1,13 +1,24 @@
 import React, { useState } from "react";
 
 import Button from "../../../components/ui/Button";
-import { X, Phone, Shield, Check, Clock, MoveRight } from "lucide-react";
+import {
+  X,
+  Phone,
+  Shield,
+  Check,
+  Clock,
+  MoveRight,
+  CircleAlert,
+} from "lucide-react";
 import { useUser } from "../../../context/userContext";
-import { fetchData } from "../../../utils/fetchData";
+import { fetchData, postData } from "../../../utils/fetchData";
 
 const LoginForm = ({ setIsLoginOpen }) => {
-
   const { userState, updateUser } = useUser();
+  const isMockData = false;
+  const [error, setError] = useState("");
+
+  const API_URL = "/api";
 
   const [loginStep, setLoginStep] = useState("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -16,17 +27,31 @@ const LoginForm = ({ setIsLoginOpen }) => {
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
 
-  const getCustomerRegistered = async (mobileNumber) => {
+  const getCustomerRegistered = async (url) => {
     try {
-      const response = await fetchData(
-        `http://localhost/auth/v1/user/authenticate/:${mobileNumber}`
-      );
-      updateUser({
-        isRegisteredUser: response.isRegisteredUser,
-      });
-      return response.isRegisteredUser;
+      const response = await fetchData(url);
+      if (!response) {
+        throw new Error("Failed to fetch user data");
+      }
+      return response;
     } catch (error) {
-      console.log("Error loading help content:", error);
+      return {
+        token: "",
+        error: error?.message,
+      };
+    }
+  };
+
+  const handleDisabled = (pinNumber, confirmPinNumber, isRegisteredUser) => {
+    if (isRegisteredUser) {
+      return pinNumber.length < 4;
+    } else {
+      return (
+        phoneNumber.length < 10 ||
+        pinNumber.length < 4 ||
+        confirmPinNumber.length < 4 ||
+        pinNumber !== confirmPinNumber
+      );
     }
   };
 
@@ -45,10 +70,9 @@ const LoginForm = ({ setIsLoginOpen }) => {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900">
-              {loginStep === "phone" && "Login / Registration"}
-              {loginStep === "phone1" && useState.isRegisteredUser && "Login"}
-              {loginStep === "phone1" && !useState.isRegisteredUser && "Registration"}
+              {(loginStep === "phone" || loginStep === "phone1") && "Login / Registration"}
               {loginStep === "success" && "Welcome!"}
+              {loginStep === "error" && ""}
             </h3>
             <button
               onClick={() => {
@@ -107,19 +131,23 @@ const LoginForm = ({ setIsLoginOpen }) => {
                 className="w-full text-default-color text-default-color:hover text-white py-3 text-base"
                 disabled={phoneNumber.length < 10}
                 onClick={() => {
-                  setLoginStep("phone1");
-
-                  updateUser({
-                    isRegisteredUser: false,
-                  });
-
-                  // getCustomerRegistered();
-
-                  /**/
-
-                  // setTimeout(() => {
-                  //       setIsLoginOpen(false);
-                  // }, 200);
+                  if (isMockData) {
+                    updateUser({
+                      isRegisteredUser: false,
+                    });
+                    setLoginStep("phone1");
+                  } else {
+                    const url = `${API_URL}/dev/auth/v1/user/authenticate/${phoneNumber}`;
+                    getCustomerRegistered(url).then((response) => {
+                      const token = JSON.parse(response).token
+                      updateUser({
+                        isRegisteredUser: token
+                          ? true
+                          : false,
+                      });
+                      setLoginStep("phone1");
+                    });
+                  }
                 }}
               >
                 <MoveRight className="w-5 h-5 mr-2" />
@@ -141,12 +169,12 @@ const LoginForm = ({ setIsLoginOpen }) => {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Phone className="w-8 h-8 text-default-color" />
                 </div>
-                <p className="text-gray-600">
-                  Enter your mobile number & PIN number
+                <p className="text-green-800">
+                  {`Mobile number: ${countryCode} ${phoneNumber}`}
                 </p>
               </div>
 
-              <div>
+              {/* <div>
                 <div className="flex gap-2">
                   <select
                     disabled
@@ -174,9 +202,28 @@ const LoginForm = ({ setIsLoginOpen }) => {
                     placeholder="Enter mobile number"
                   />
                 </div>
-              </div>
+              </div> */}
 
               {userState.isRegisteredUser ? (
+                <>
+                  <div>
+                    <div className="flex gap-2">
+                      <input
+                        type="tel"
+                        value={pinNumber}
+                        onChange={(e) => {
+                          setError("");
+                          setPINNumber(
+                            e.target.value.replace(/\D/g, "").slice(0, 4)
+                          );
+                        }}
+                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        placeholder="Enter Your PIN"
+                      />
+                    </div>
+                  </div>
+                </>
+              ) : (
                 <>
                   <div>
                     <div className="flex gap-2">
@@ -188,25 +235,6 @@ const LoginForm = ({ setIsLoginOpen }) => {
                       />
                     </div>
                   </div>
-
-                  <div>
-                    <div className="flex gap-2">
-                      <input
-                        type="tel"
-                        value={pinNumber}
-                        onChange={(e) =>
-                          setPINNumber(
-                            e.target.value.replace(/\D/g, "").slice(0, 4)
-                          )
-                        }
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                        placeholder="Enter Your PIN"
-                      />
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
                   <div>
                     <div className="flex gap-2">
                       <input
@@ -222,6 +250,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                       />
                     </div>
                   </div>
+
                   <div>
                     <div className="flex gap-2">
                       <input
@@ -239,23 +268,66 @@ const LoginForm = ({ setIsLoginOpen }) => {
                   </div>
                 </>
               )}
+              <div className="text-red-600">{error}</div>
               <Button
                 className="w-full text-default-color text-default-color:hover text-white py-3 text-base"
-                disabled={phoneNumber.length < 10 || pinNumber.length < 4 || confirmPinNumber.length < 4 || (pinNumber !== confirmPinNumber)}
+                disabled={handleDisabled(
+                  pinNumber,
+                  confirmPinNumber,
+                  userState.isRegisteredUser
+                )}
                 onClick={() => {
-                  setLoginStep("success");
-                  updateUser({
-                    isLoggedIn: true,
-                    isProfileUploaded: false,
-                    mobileNumber: phoneNumber,
-                    countryCode: "+91",
-                    userId: "",
-                    userName: name,
-                  });
+                  if (isMockData) {
+                    setLoginStep("success");
+                    updateUser({
+                      isLoggedIn: true,
+                      isProfileUploaded: false,
+                      mobileNumber: phoneNumber,
+                      countryCode: "+91",
+                      userId: "",
+                      userName: name,
+                    });
 
-                  setTimeout(() => {
-                    setIsLoginOpen(false);
-                  }, 200);
+                    setTimeout(() => {
+                      setIsLoginOpen(false);
+                    }, 200);
+                  } else {
+                    const url = userState.isRegisteredUser
+                      ? `${API_URL}/dev/auth/v1/user/authenticate`
+                      : `${API_URL}/dev/auth/v1/user/register`;
+
+                    let requestData = {
+                      mobile: phoneNumber,
+                      pin: pinNumber,
+                    };
+
+                    if (!userState.isRegisteredUser) {
+                      requestData.name = name;
+                    }
+
+                    postData(url, requestData).then((response) => {
+                      if (response.error) {
+                        console.error("Error during login:", response.error);
+                        // setLoginStep("error");
+                        setError(
+                          response.message || "Login failed. Please try again."
+                        );
+                      } else {
+                        const { id, mobile, name, token } = response;
+                        updateUser({
+                          isLoggedIn: true,
+                          mobileNumber: mobile,
+                          userId: id,
+                          userName: name,
+                          token: token,
+                        });
+                        setLoginStep("success");
+                        setTimeout(() => {
+                          setIsLoginOpen(false);
+                        }, 1000);
+                      }
+                    });
+                  }
                 }}
               >
                 <MoveRight className="w-5 h-5 mr-2" />
@@ -270,8 +342,6 @@ const LoginForm = ({ setIsLoginOpen }) => {
               </div>
             </div>
           )}
-
-          {/* OTP Verification Step */}
 
           {/* Success Step */}
           {loginStep === "success" && (
@@ -296,6 +366,23 @@ const LoginForm = ({ setIsLoginOpen }) => {
                   style={{ animationDelay: "0.2s" }}
                 ></div>
               </div>
+            </div>
+          )}
+
+          {/* Error Step */}
+          {loginStep === "error" && (
+            <div className="relative text-center space-y-4">
+              {/* Error Icon */}
+              <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
+                <CircleAlert className="w-8 h-8 text-red-600" />
+              </div>
+
+              <h4 className="text-lg font-semibold text-gray-900">
+                {!useState.isRegisteredUser
+                  ? "Login Failed"
+                  : "Registration Failed"}
+              </h4>
+              <p className="text-gray-600"></p>
             </div>
           )}
         </div>

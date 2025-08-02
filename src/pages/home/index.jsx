@@ -12,7 +12,6 @@ import {
   DollarSign,
   LogOut,
   LogIn,
-  Upload,
   Image,
   File,
   Settings2,
@@ -22,17 +21,18 @@ import { toast } from "sonner";
 import LoginForm from "./components/LoginForm";
 import { useUser } from "../../context/userContext";
 import PreferenceForm from "./components/Preference";
+import FileViewerPopup from "./components/FileViewerPopup";
 
 const HomePage = () => {
   const navigate = useNavigate();
 
-  const { userState, updateUser } = useUser();
+  const { userState, updateUser, resetUser } = useUser();
+  const [fileViewerPopup, setFileViewerPopup] = useState(false);
   const [inputText, setInputText] = useState("");
   const [isLoginOpen, setIsLoginOpen] = useState(false);
   const [isShowPreference, setIsShowPreference] = useState(false);
   const [isAttachOpen, setIsAttachOpen] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
-  const [isDragOver, setIsDragOver] = useState(false);
   const [messages, setMessages] = useState([
     {
       id: "1",
@@ -50,8 +50,31 @@ const HomePage = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   // File handling functions
-  const handleFileUpload = (files) => {
-    if (!files) return;
+  const handleFileUpload = async (files) => {
+    const file = files[0];
+    if (!file) return;
+
+    const formData = new FormData();
+    formData.append("file", file);
+
+    updateUser({ isProfileUploaded: true });
+    return;
+    try {
+      // Replace with your actual endpoint
+      const response = await fetch("https://your-api-endpoint.com/upload", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.statusText}`);
+      }
+      toast.success("File uploaded successfully!");
+      updateUser({ isProfileUploaded: true });
+    } catch (error) {
+      console.error(error);
+      toast.error(`Upload failed: ${error.message}`);
+    }
 
     Array.from(files).forEach((file) => {
       // Check file size (max 10MB)
@@ -60,23 +83,23 @@ const HomePage = () => {
         return;
       }
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const newFile = {
-          // id.now().toString() + Math.random().toString(36).substr(2, 9),
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          url: e.target?.result,
-        };
-        setAttachedFiles((prev) => [...prev, newFile]);
-      };
+      // const reader = new FileReader();
+      // reader.onload = (e) => {
+      //   const newFile = {
+      //     // id.now().toString() + Math.random().toString(36).substr(2, 9),
+      //     name: file.name,
+      //     size: file.size,
+      //     type: file.type,
+      //     url: e.target?.result,
+      //   };
+      //   setAttachedFiles((prev) => [...prev, newFile]);
+      // };
 
-      if (file.type.startsWith("image/")) {
-        reader.readAsDataURL(file);
-      } else {
-        reader.readAsDataURL(file);
-      }
+      // if (file.type.startsWith("image/")) {
+      //   reader.readAsDataURL(file);
+      // } else {
+      //   reader.readAsDataURL(file);
+      // }
     });
     setIsAttachOpen(false);
   };
@@ -204,7 +227,7 @@ const HomePage = () => {
         <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4">
           <div className="max-w-4xl mx-auto">
             {/* New Conversation Button */}
-            
+
             {messages.length > 1 && (
               <div className="text-center mb-6">
                 <Button
@@ -379,22 +402,8 @@ const HomePage = () => {
 
             <div
               className={cn(
-                "rounded-xl border transition-colors border-textbox-color",
-                isDragOver && " bg-blue-50"
+                "rounded-xl border transition-colors border-textbox-color"
               )}
-              // onDragOver={(e) => {
-              //   e.preventDefault();
-              //   setIsDragOver(true);
-              // }}
-              // onDragLeave={(e) => {
-              //   e.preventDefault();
-              //   setIsDragOver(false);
-              // }}
-              // onDrop={(e) => {
-              //   e.preventDefault();
-              //   setIsDragOver(false);
-              //   handleFileUpload(e.dataTransfer.files);
-              // }}
             >
               {/* Input Section */}
               <div className="p-3 sm:p-4 relative">
@@ -418,30 +427,17 @@ const HomePage = () => {
                 <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
                   {/* Paperclip Button */}
 
-                  {!userState.isProfileUploaded ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() => setIsAttachOpen(!isAttachOpen)}
-                    >
-                      <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                      <span className="text-sm sm:text-base text-gray-700">
-                        Attach
-                      </span>
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    >
-                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                      <span className="text-sm sm:text-base text-gray-700">
-                        Profile
-                      </span>
-                    </Button>
-                  )}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    onClick={() => setIsAttachOpen(!isAttachOpen)}
+                  >
+                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <span className="text-sm sm:text-base text-gray-700">
+                      Attach
+                    </span>
+                  </Button>
 
                   {/* Topup Button */}
                   <Button
@@ -488,7 +484,7 @@ const HomePage = () => {
                       size="icon"
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
                       onClick={() => {
-                        updateUser({ isLoggedIn: false, mobileNumber: "" });
+                        resetUser();
                         toast.success("Logged out successfully");
                       }}
                     >
@@ -526,27 +522,42 @@ const HomePage = () => {
               <div className="p-4">
                 <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
                 <div className="space-y-2">
-                  <button
+                  {userState.isProfileUploaded ? (
+                    <button 
                     onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept =
-                        ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
-                      input.multiple = true;
-                      input.onchange = (e) => handleFileUpload(e.target.files);
-                      input.click();
-                      setIsAttachOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    <FileText className="w-4 h-4 text-orange-500" />
-                    <div>
-                      <span className="text-sm font-medium">
-                        Upload Documents
-                      </span>
-                      <p className="text-xs text-gray-500">PDF, DOC</p>
-                    </div>
-                  </button>
+                      setIsAttachOpen(false)
+                      setFileViewerPopup(true);}
+                    }
+                    className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+                      <User className="w-4 h-4 text-orange-500" />
+                      <div>
+                        <span className="text-sm font-medium">Profile</span>
+                      </div>
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => {
+                        const input = document.createElement("input");
+                        input.type = "file";
+                        input.accept =
+                          ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
+                        input.multiple = true;
+                        input.onchange = (e) =>
+                          handleFileUpload(e.target.files);
+                        input.click();
+                        setIsAttachOpen(false);
+                      }}
+                      className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                    >
+                      <FileText className="w-4 h-4 text-orange-500" />
+                      <div>
+                        <span className="text-sm font-medium">
+                          Upload Documents
+                        </span>
+                        <p className="text-xs text-gray-500">PDF, DOC</p>
+                      </div>
+                    </button>
+                  )}
 
                   <button
                     onClick={() => {
@@ -586,6 +597,15 @@ const HomePage = () => {
         {isShowPreference && (
           <PreferenceForm setIsShowPreference={setIsShowPreference} />
         )}
+        {/* File Viewer Popup */}
+        {fileViewerPopup && ( 
+          <FileViewerPopup
+          showpop={fileViewerPopup}
+          onClose={() => setFileViewerPopup(false)}
+          />
+        )}
+
+
       </main>
 
       <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
