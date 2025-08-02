@@ -1,7 +1,7 @@
 {
-  "name": "Vivek Kumar Pal",
-  "phoneNumber": "9876543210",
-  "email": "vivek@example.com",
-  "location": "New Delhi, India",
-  "preferredRole": "Technical Analyst"
+  "Name": "John Doe",
+  "PhoneNumber": "9876543210",
+  "Email": "john@example.com",
+  "Location": "New Delhi, India",
+  "PreferredRole": "Enterprise Architect"
 }

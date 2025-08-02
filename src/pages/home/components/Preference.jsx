@@ -36,18 +36,18 @@ const PreferenceForm = ({ setIsShowPreference }) => {
             </button>
           </div>
 
-          <table className="table-auto w-full border border-gray-300">
-            <tbody>
-              {Object.entries(preferenceData).map(([key, value]) => (
-                <tr key={key} className="border-b border-gray-200">
-                  <td className="px-4 py-2 font-medium text-gray-700 capitalize">
-                    {key.replace(/([A-Z])/g, " $1")}
-                  </td>
-                  <td className="px-4 py-2 text-gray-600">{value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {Object.entries(preferenceData).map(([key, value]) => (
+            <div className="space-y-3 mb-6" key={key}>
+              <div className="flex items-center justify-between py-2 border-b border-border/50">
+                <span className="text-sm text-muted-foreground">
+                  {key.replace(/([A-Z])/g, " $1")}
+                </span>
+                <span className="text-sm font-medium text-foreground">
+                  {value}
+                </span>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
     </>

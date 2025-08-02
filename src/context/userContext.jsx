@@ -7,6 +7,7 @@ const UserContext = createContext();
 export const UserProvider = ({ children }) => {
   const [userState, setUserState] = useState({
     isLoggedIn: false,
+    isRegisteredUser: false,
     isProfileUploaded: false,
     mobileNumber: '',
     userId: '',
