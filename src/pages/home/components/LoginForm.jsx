@@ -18,7 +18,15 @@ const LoginForm = ({ setIsLoginOpen }) => {
   const isMockData = false;
   const [error, setError] = useState("");
 
-  const API_URL = "/api";
+  const apiUrl = import.meta.env.PROD
+  ?  import.meta.env.VITE_API_URL
+  : '/api'
+
+  const API_URL = apiUrl;
+
+  
+
+
 
   const [loginStep, setLoginStep] = useState("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
