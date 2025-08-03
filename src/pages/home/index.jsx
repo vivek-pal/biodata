@@ -82,24 +82,6 @@ const HomePage = () => {
         alert(`File ${file.name} is too large. Maximum size is 10MB.`);
         return;
       }
-
-      // const reader = new FileReader();
-      // reader.onload = (e) => {
-      //   const newFile = {
-      //     // id.now().toString() + Math.random().toString(36).substr(2, 9),
-      //     name: file.name,
-      //     size: file.size,
-      //     type: file.type,
-      //     url: e.target?.result,
-      //   };
-      //   setAttachedFiles((prev) => [...prev, newFile]);
-      // };
-
-      // if (file.type.startsWith("image/")) {
-      //   reader.readAsDataURL(file);
-      // } else {
-      //   reader.readAsDataURL(file);
-      // }
     });
     setIsAttachOpen(false);
   };
@@ -457,7 +439,7 @@ const HomePage = () => {
                     variant="ghost"
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => setIsShowPreference(!isShowPreference)}
+                    onClick={() => navigate("/profilepreference")}
                   >
                     <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
@@ -593,10 +575,7 @@ const HomePage = () => {
 
         {/* Mobile Login Popup */}
         {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
-        {/* Preference Popup */}
-        {isShowPreference && (
-          <PreferenceForm setIsShowPreference={setIsShowPreference} />
-        )}
+        
         {/* File Viewer Popup */}
         {fileViewerPopup && ( 
           <FileViewerPopup

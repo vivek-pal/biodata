@@ -14,8 +14,7 @@ const Header = ({isChild}) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const defaultMenuItems = [
-    { icon: User, label: "Profile", href: "/biodata/#/profile" },
-    { icon: DollarSign, label: "Pricing", href: "/biodata/#/payment" },
+    { icon: DollarSign, label: "Topup", href: "/biodata/#/payment" },
     { icon: HelpCircle, label: "Help & Support", href: "/biodata/#/help" },
     { icon: FileText, label: "Terms & Conditions", href: "/biodata/#/policy" },
     

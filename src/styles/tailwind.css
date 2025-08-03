@@ -121,3 +121,9 @@
 .bg-primary {
   background-color: #2c5791;
 }
+
+@media (min-width: 640px) {
+    .sm\:w-96 {
+        width: 25rem !important;
+    }
+}

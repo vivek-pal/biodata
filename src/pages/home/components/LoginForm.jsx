@@ -1,13 +1,6 @@
 import React, { useState } from "react";
-
 import Button from "../../../components/ui/Button";
-import {
-  X,
-  Phone,
-  Check,
-  MoveRight,
-  CircleAlert,
-} from "lucide-react";
+import { X, Phone, Check, MoveRight, CircleAlert } from "lucide-react";
 import { useUser } from "../../../context/userContext";
 import { fetchData, postData } from "../../../utils/fetchData";
 
@@ -140,7 +133,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                     });
                     setLoginStep("phone1");
                   } else {
-                    setIsLoading(true)
+                    setIsLoading(true);
                     const url = `${API_URL}/dev/auth/v1/user/authenticate/${phoneNumber}`;
                     getCustomerRegistered(url).then((response) => {
                       setIsLoading(false);
@@ -173,37 +166,6 @@ const LoginForm = ({ setIsLoginOpen }) => {
                   {`Mobile number: ${countryCode} ${phoneNumber}`}
                 </p>
               </div>
-
-              {/* <div>
-                <div className="flex gap-2">
-                  <select
-                    disabled
-                    value={countryCode}
-                    onChange={(e) => setCountryCode(e.target.value)}
-                    className="px-2 sm:px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm sm:text-base"
-                  >
-                    <option value="+1">🇺🇸 +1</option>
-                    <option selected value="+91">
-                      🇮🇳 +91
-                    </option>
-                    <option value="+44">🇬🇧 +44</option>
-                    <option value="+86">🇨🇳 +86</option>
-                  </select>
-                  <input
-                    disabled
-                    type="tel"
-                    value={phoneNumber}
-                    onChange={(e) =>
-                      setPhoneNumber(
-                        e.target.value.replace(/\D/g, "").slice(0, 10)
-                      )
-                    }
-                    className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
-                    placeholder="Enter mobile number"
-                  />
-                </div>
-              </div> */}
-
               {userState.isRegisteredUser ? (
                 <>
                   <div>
@@ -270,7 +232,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
               )}
               <div className="text-red-600">{error}</div>
               <Button
-              loading={isLoading}
+                loading={isLoading}
                 className="w-full text-default-color text-default-color:hover text-white py-3 text-base"
                 disabled={handleDisabled(
                   pinNumber,
