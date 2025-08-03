@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 // import helpContent from "../../assets/data/helpContent.json";
 import Header from "../../components/ui/Header";
 import Footer from "../../components/ui/Footer";
 
 const HelpPage = () => {
   const helpUrl = import.meta.env.VITE_HELP_URL;
+  const [loading, setLoading] = useState(true);
 
   return (
     // <div className="min-h-screen relative">
@@ -46,8 +47,10 @@ const HelpPage = () => {
     <div>
       <Header isChild/>
       <main className="">
+        {loading && <div className="absolute inset-0 flex items-center justify-center">Loading...</div>}
         <iframe
           src={helpUrl}
+          onLoad={() => setLoading(false)}
           title="Help Section"
           className="w-full h-[600px]"
         />

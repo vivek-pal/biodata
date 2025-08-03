@@ -4,9 +4,7 @@ import Button from "../../../components/ui/Button";
 import {
   X,
   Phone,
-  Shield,
   Check,
-  Clock,
   MoveRight,
   CircleAlert,
 } from "lucide-react";
@@ -18,15 +16,9 @@ const LoginForm = ({ setIsLoginOpen }) => {
   const isMockData = false;
   const [error, setError] = useState("");
 
-  const apiUrl = import.meta.env.PROD
-  ?  import.meta.env.VITE_API_URL
-  : '/api'
+  const apiUrl = import.meta.env.PROD ? import.meta.env.VITE_API_URL : "/api";
 
   const API_URL = apiUrl;
-
-  
-
-
 
   const [loginStep, setLoginStep] = useState("phone");
   const [phoneNumber, setPhoneNumber] = useState("");
@@ -34,6 +26,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
   const [confirmPinNumber, setConfirmPinNumber] = useState("");
   const [name, setName] = useState("");
   const [countryCode, setCountryCode] = useState("+91");
+  const [isLoading, setIsLoading] = useState(false);
 
   const getCustomerRegistered = async (url) => {
     try {
@@ -78,7 +71,8 @@ const LoginForm = ({ setIsLoginOpen }) => {
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-xl font-semibold text-gray-900">
-              {(loginStep === "phone" || loginStep === "phone1") && "Login / Registration"}
+              {(loginStep === "phone" || loginStep === "phone1") &&
+                "Login / Registration"}
               {loginStep === "success" && "Welcome!"}
               {loginStep === "error" && ""}
             </h3>
@@ -138,6 +132,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
               <Button
                 className="w-full text-default-color text-default-color:hover text-white py-3 text-base"
                 disabled={phoneNumber.length < 10}
+                loading={isLoading}
                 onClick={() => {
                   if (isMockData) {
                     updateUser({
@@ -145,13 +140,13 @@ const LoginForm = ({ setIsLoginOpen }) => {
                     });
                     setLoginStep("phone1");
                   } else {
+                    setIsLoading(true)
                     const url = `${API_URL}/dev/auth/v1/user/authenticate/${phoneNumber}`;
                     getCustomerRegistered(url).then((response) => {
-                      const token = JSON.parse(response).token
+                      setIsLoading(false);
+                      const token = JSON.parse(response).token;
                       updateUser({
-                        isRegisteredUser: token
-                          ? true
-                          : false,
+                        isRegisteredUser: token ? true : false,
                       });
                       setLoginStep("phone1");
                     });
@@ -174,9 +169,6 @@ const LoginForm = ({ setIsLoginOpen }) => {
           {loginStep === "phone1" && (
             <div className="space-y-4">
               <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Phone className="w-8 h-8 text-default-color" />
-                </div>
                 <p className="text-green-800">
                   {`Mobile number: ${countryCode} ${phoneNumber}`}
                 </p>
@@ -278,6 +270,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
               )}
               <div className="text-red-600">{error}</div>
               <Button
+              loading={isLoading}
                 className="w-full text-default-color text-default-color:hover text-white py-3 text-base"
                 disabled={handleDisabled(
                   pinNumber,
@@ -285,6 +278,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                   userState.isRegisteredUser
                 )}
                 onClick={() => {
+                  setIsLoading(true);
                   if (isMockData) {
                     setLoginStep("success");
                     updateUser({
@@ -314,6 +308,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                     }
 
                     postData(url, requestData).then((response) => {
+                      setIsLoading(false);
                       if (response.error) {
                         console.error("Error during login:", response.error);
                         // setLoginStep("error");

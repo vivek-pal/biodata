@@ -1,10 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 // import termsContent from "../../assets/data/termsContent.json";
 import Header from "../../components/ui/Header";
 import Footer from "../../components/ui/Footer";
 
 const TermsAndConditions = () => {
   const policyUrl = import.meta.env.VITE_POLICY_URL;
+  const [loading, setLoading] = useState(true);
+  
   return (
     // <div className="min-h-screen relative pb-16">
     //   <Header />
@@ -35,8 +37,10 @@ const TermsAndConditions = () => {
     <div>
       <Header isChild />
       <main className="">
+         {loading && <div className="absolute inset-0 flex items-center justify-center">Loading...</div>}
         <iframe
           src={policyUrl}
+          onLoad={() => setLoading(false)}
           title="Policy Section"
           className="w-full h-[600px]"
         />
