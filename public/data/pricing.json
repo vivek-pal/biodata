@@ -1,0 +1,56 @@
+{
+"pricing":[
+      {
+        "service": "Web Hosting",
+        "price": "₹299/mo",
+        "description": "Reliable hosting with 99.9% uptime"
+      },
+      {
+        "service": "Domain Registration",
+        "price": "₹699/yr",
+        "description": "Get your custom domain name"
+      },
+      {
+        "service": "SSL Certificate",
+        "price": "₹499/yr",
+        "description": "Secure your site with HTTPS"
+      },
+      {
+        "service": "Email Service",
+        "price": "₹199/mo",
+        "description": "Professional email for your domain"
+      },
+      {
+        "service": "Site Backup",
+        "price": "₹149/mo",
+        "description": "Daily backups with restore options"
+      }
+    ],
+    "paymentOptions": [
+      {
+        "value": 2,
+        "label": "₹2 - Get 20 voucher value"
+      },
+      {
+        "value": 10,
+        "label": "₹10 - Get 110 voucher value"
+      },
+      {
+        "value": 20,
+        "label": "₹20 - Get 220 voucher value"
+      },
+      {
+        "value": 30,
+        "label": "₹30 - Get 330 voucher value"
+      },
+      {
+        "value": 40,
+        "label": "₹40 - Get 440 voucher value"
+      },
+      {
+        "value": 50,
+        "label": "₹50 - Get 550 voucher value"
+      }
+    ],
+    "balance": 100
+	}

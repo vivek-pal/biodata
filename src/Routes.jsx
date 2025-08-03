@@ -6,6 +6,7 @@ import Login from "./pages/login";
 import HelpPage from "./pages/help";
 import TermsAndConditions from "./pages/policy";
 import Payment from "./pages/payment";
+import Profile from "./pages/profile/profile";
 
 const Routes = () => {
   return (
@@ -17,6 +18,7 @@ const Routes = () => {
         <Route path="/help" element={<HelpPage />} />
         <Route path="/policy" element={<TermsAndConditions />} />
         <Route path="/payment" element={<Payment />} />
+        <Route path="/profile" element={<Profile />} />
       </RouterRoutes>
     </HashRouter>
   );

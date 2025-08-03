@@ -1,0 +1,33 @@
+{
+  "paymentOption": [
+    {
+      "value": 2,
+      "label": "₹2    Get 20 voucher value"
+    },
+    {
+      "value": 10,
+      "label": "₹10    Get 110 voucher value"
+    },
+    {
+      "value": 20,
+      "label": "₹20    Get 220 voucher value"
+    },
+    {
+      "value": 30,
+      "label": "₹30    Get 330 voucher value"
+    },
+    {
+      "value": 40,
+      "label": "₹40    Get 440 voucher value"
+    },
+    {
+      "value": 50,
+      "label": "₹50    Get 550 voucher value"
+    }
+  ],
+  "upiconfig": {
+    "upiId": "9289893639@ybl",
+    "name": "Abdul Salam",
+    "currency": "INR"
+  }
+}

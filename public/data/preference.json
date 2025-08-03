@@ -1,0 +1,25 @@
+{
+  "formConfig": [
+    { "name": "AgeRange", "label": "Age Range", "type": "input" },
+    { "name": "MaritalStatus", "label": "Marital Status", "type": "input" },
+    { "name": "PreferredEducationField", "label": "Preferred Education Field", "type": "textarea" },
+    { "name": "JobType", "label": "Job Type", "type": "input" },
+    { "name": "PreferredAnnualIncome", "label": "Preferred Annual Income", "type": "input" },
+    { "name": "LifeStyle", "label": "Life Style", "type": "textarea" },
+    { "name": "FamilyPreference", "label": "Family Preference", "type": "textarea" },
+    { "name": "ReligionCasteSubCast", "label": "Religion / Caste / Sub-Caste", "type": "input" },
+    { "name": "PersonalityCompatibility", "label": "Personality & Compatibility", "type": "textarea" }
+  ],
+  "placeHolders": [
+    { "name": "AgeRange", "placeholder": "e.g 25-30 yrs" },
+    { "name": "MaritalStatus", "placeholder": "e.g Never married, Divorced, Widow/Widower, etc." },
+    { "name": "PreferredEducationField", "placeholder": "e.g Engineering, Medical, Management, etc." },
+    { "name": "JobType", "placeholder": "e.g Private, Government, Business, Freelancer, Homemaker, others" },
+    { "name": "PreferredAnnualIncome", "placeholder": "e.g 10 L" },
+    { "name": "LifeStyle", "placeholder": "e.g Smoking / Drinking / Vegetarian / Non-Vegetarian" },
+    { "name": "FamilyPreference", "placeholder": "e.g Joint or Nuclear" },
+    { "name": "ReligionCasteSubCast", "placeholder": "e.g Hindu / Brahmin / Sharma" },
+    { "name": "PersonalityCompatibility", "placeholder": "e.g Introvert, Extrovert, Calm, Ambitious" }
+  ] 
+}
+  
