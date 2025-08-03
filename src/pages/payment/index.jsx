@@ -50,8 +50,8 @@ export default function Payment() {
   return (
     <>
     <Header/>
-    <div className="min-h-screen bg-blue-50 py-10 px-4 flex flex-col items-center">
-      <div className="w-full py-10 max-w-4xl bg-white rounded-lg shadow p-6">
+    <div className="min-h-screen py-10 bg-white px-4 flex flex-col items-center">
+      <div className="w-full py-10 max-w-4xl ">
         <h2 className="text-2xl py-4 font-bold text-default-color mb-4">
           TOPUP VOUCHERS
         </h2>

@@ -51,8 +51,8 @@ const Profile = () => {
   return (
     <>
     <Header />
-    <div className="min-h-screen bg-blue-50 flex justify-center py-10 px-4">
-      <div className="w-full max-w-3xl bg-white p-8 rounded-lg shadow-md">
+    <div className="min-h-screen bg-white flex justify-center py-10 px-4">
+      <div className="w-full max-w-3xl  p-8 ">
         <h1 className="text-3xl font-bold text-default-color mb-8 text-center">
           Profile Preferences
         </h1>
