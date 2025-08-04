@@ -33,20 +33,7 @@ const HomePage = () => {
   const [isShowPreference, setIsShowPreference] = useState(false);
   const [isAttachOpen, setIsAttachOpen] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
-  const [messages, setMessages] = useState([
-    {
-      id: "1",
-      text: "I want a profile having age 25 and caste Hindu",
-      isUser: true,
-      timestamp: new Date(Date.now() - 1740000), // 29 minutes ago
-    },
-    {
-      id: "2",
-      text: "Hello! I'm here to help you, let me process your request.",
-      isUser: false,
-      timestamp: new Date(Date.now() - 1800000), // 30 minutes ago
-    },
-  ]);
+  const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
   // File handling functions
@@ -206,33 +193,25 @@ const HomePage = () => {
       <Header />
       <main className="flex flex-col h-screen bg-white">
         {/* Chat Messages Area */}
-        <div className="flex-1 overflow-y-auto px-3 sm:px-4 py-4">
+        <div
+          className={cn(
+            "flex-1 overflow-y-auto px-3 sm:px-4 py-4 ",
+            messages.length === 0
+              ? "flex items-center justify-center h-screen "
+              : "py-10"
+          )}
+        >
           <div className="max-w-4xl mx-auto">
             {/* New Conversation Button */}
 
-            {messages.length > 1 && (
-              <div className="text-center mb-6">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    setMessages([
-                      {
-                        id: "1",
-                        text: "Hello! I'm here to help you build your next project. What would you like to create today?",
-                        isUser: false,
-                        timestamp: new Date(),
-                      },
-                    ]);
-                  }}
-                  className="mb-4"
-                >
-                  Start New Conversation
-                </Button>
+            {messages.length === 0 && (
+              <div className="text-center mb-6 py-10">
+                <p className="font-bold text-xl">Hi, how can I help you?</p>
               </div>
             )}
 
             {/* Messages */}
-            <div className="space-y-4">
+            <div className="space-y-4 py-10">
               {messages.map((message) => (
                 <div
                   key={message.id}
@@ -505,12 +484,13 @@ const HomePage = () => {
                 <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
                 <div className="space-y-2">
                   {userState.isProfileUploaded ? (
-                    <button 
-                    onClick={() => {
-                      setIsAttachOpen(false)
-                      setFileViewerPopup(true);}
-                    }
-                    className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors">
+                    <button
+                      onClick={() => {
+                        setIsAttachOpen(false);
+                        setFileViewerPopup(true);
+                      }}
+                      className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                    >
                       <User className="w-4 h-4 text-orange-500" />
                       <div>
                         <span className="text-sm font-medium">Profile</span>
@@ -575,16 +555,14 @@ const HomePage = () => {
 
         {/* Mobile Login Popup */}
         {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
-        
+
         {/* File Viewer Popup */}
-        {fileViewerPopup && ( 
+        {fileViewerPopup && (
           <FileViewerPopup
-          showpop={fileViewerPopup}
-          onClose={() => setFileViewerPopup(false)}
+            showpop={fileViewerPopup}
+            onClose={() => setFileViewerPopup(false)}
           />
         )}
-
-
       </main>
 
       <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
