@@ -14,7 +14,7 @@ const Header = ({isChild}) => {
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const defaultMenuItems = [
-    { icon: DollarSign, label: "Topup", href: "/biodata/#/payment" },
+    // { icon: DollarSign, label: "Topup", href: "/biodata/#/payment" },
     { icon: HelpCircle, label: "Help & Support", href: "/biodata/#/help" },
     { icon: FileText, label: "Terms & Conditions", href: "/biodata/#/policy" },
     
@@ -93,7 +93,7 @@ const Header = ({isChild}) => {
                 </div>
                 <div>
                   <h3 className="font-medium text-gray-900 text-sm">
-                    User Account
+                    {userState.userName || "Guest"}
                   </h3>
                   <p className="text-xs text-gray-500">
                     {userState.mobileNumber && (

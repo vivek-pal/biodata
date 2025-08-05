@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { Link } from "react-router-dom";
-import { upiConfig } from "../../config";
-import Header from "../../components/ui/Header";
-import Footer from "../../components/ui/Footer";
-// import PriceListing from "../home/components/PriceListing";
-import { fetchPricingData } from "../../services/serviceApi";
+// import { Link } from "react-router-dom";
+import { upiConfig } from "../../../config";
+import PriceListing from "./PriceListing";
+import { fetchPricingData } from "../../../services/serviceApi";
 
-export default function Payment() {
+export default function TopUpForm() {
   const { upiId, name, currency } = upiConfig;
 
   const [selectedAmount, setSelectedAmount] = useState(null);
@@ -49,12 +47,8 @@ export default function Payment() {
 
   return (
     <>
-      <Header isChild />
-      <div className="min-h-screen py-10 bg-white px-4 flex flex-col items-center">
-        <div className="w-full py-10 max-w-4xl ">
-          <h2 className="text-2xl py-4 font-bold text-default-color mb-4  text-center">
-            TOPUP VOUCHERS
-          </h2>
+      <div className="min-h-screen bg-white px-4 flex flex-col items-center">
+        <div className="w-full max-w-4xl ">
 
           {/* Balance & Statement */}
           <div className="mb-6">
@@ -66,16 +60,16 @@ export default function Payment() {
                 <span className="font-medium">Balance:</span>{" "}
                 <span className="font-bold">{availabelBal}</span>
               </div>
-              <Link
-                to="#"
+              <a
+                href="#"
                 className="text-default-color hover:underline text-sm"
               >
                 Statement
-              </Link>
+              </a>
             </div>
           </div>
 
-          {/* Payment Options + QR */}
+          {/* TopUpForm Options + QR */}
           <div className="md:flex gap-6 mb-8">
             <form onSubmit={handleSubmit} className="flex-1 space-y-2">
               {paymentOptions.map((option) => (
@@ -140,7 +134,7 @@ export default function Payment() {
               type="submit"
               className="bg-primary text-white px-4 py-2 rounded hover:bg-primary"
             >
-              Capture Payment Details
+              Capture TopUpForm Details
             </button>
           </form>
 
@@ -149,11 +143,10 @@ export default function Payment() {
             <h2 className="text-xl font-semibold text-default-color mb-3">
               Pricing
             </h2>
-            {/* <PriceListing pricingData={pricingData} /> */}
+            <PriceListing pricingData={pricingData} />
           </div>
         </div>
       </div>
-      <Footer />
     </>
   );
 }

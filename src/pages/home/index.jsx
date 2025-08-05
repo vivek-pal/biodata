@@ -20,11 +20,16 @@ import { cn } from "../../utils/cn";
 import { toast } from "sonner";
 import LoginForm from "./components/LoginForm";
 import { useUser } from "../../context/userContext";
-import PreferenceForm from "./components/Preference";
+import PreferenceForm from "./components/PreferenceForm";
 import FileViewerPopup from "./components/FileViewerPopup";
+import Modal from "../../components/ui/Modal";
+import ProfileForm from "./components/ProfileForm";
+import TopUpForm from "./components/TopUpForm";
+import { useModal } from "../../context/ModalContext";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { openModal } = useModal();
 
   const { userState, updateUser, resetUser } = useUser();
   const [fileViewerPopup, setFileViewerPopup] = useState(false);
@@ -35,6 +40,14 @@ const HomePage = () => {
   const [attachedFiles, setAttachedFiles] = useState([]);
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isModalOpen, setModalOpen] = useState(false);
+  const [isPrefOpen, setIsPrefOpen] = useState(false);
+  const [isTopupOpen, setIsTopupOpen] = useState(false);
+
+  const handleFormSubmit = (data) => {
+    console.log("Form submitted:", data);
+    setModalOpen(false);
+  };
 
   // File handling functions
   const handleFileUpload = async (files) => {
@@ -189,333 +202,394 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      <Header />
-      <main className="flex flex-col h-screen bg-white">
-        {/* Chat Messages Area */}
-        <div
-          className={cn(
-            "flex-1 overflow-y-auto px-3 sm:px-4 py-4 ",
-            messages.length === 0
-              ? "flex items-center justify-center h-screen "
-              : "py-10"
-          )}
-        >
-          <div className="max-w-4xl mx-auto">
-            {/* New Conversation Button */}
+    <>
+      {/* <Modal isOpen={isModalOpen} title="Profile" onClose={() => setModalOpen(false)} submitLbl="Save Profile" footer >
+        <ProfileForm onSubmit={handleFormSubmit} />
+      </Modal>
 
-            {messages.length === 0 && (
-              <div className="text-center mb-6 py-10">
-                <p className="font-bold text-xl">Hi, how can I help you?</p>
-              </div>
+      <Modal isOpen={isPrefOpen} title="Preference" onClose={() => setIsPrefOpen(false)} submitLbl="Save Preference" footer >
+        <PreferenceForm onSubmit={handleFormSubmit} />
+      </Modal>
+
+        <Modal isOpen={isTopupOpen} title="Top Up" onClose={() => setIsTopupOpen(false)} submitLbl="Save Topup" footer >
+        <TopUpForm onSubmit={handleFormSubmit} />
+      </Modal> */}
+
+      <div className="min-h-screen bg-background">
+        <Header />
+        <main className="flex flex-col h-screen bg-white">
+          {/* Chat Messages Area */}
+          <div
+            className={cn(
+              "flex-1 overflow-y-auto px-3 sm:px-4 py-4 ",
+              messages.length === 0
+                ? "flex items-center justify-center h-screen "
+                : "py-10"
             )}
+          >
+            <div className="max-w-4xl mx-auto">
+              {/* New Conversation Button */}
 
-            {/* Messages */}
-            <div className="space-y-4 py-10">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex gap-3 max-w-[85%]"
-                    // message.isUser ? "ml-auto justify-end" : "mr-auto"
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "px-4 py-2 group relative",
-                      message.isUser ? "border-left " : "border-right"
-                    )}
-                  >
-                    {message.files && message.files.length > 0 && (
-                      <div className="mb-3 space-y-2">
-                        {message.files.map((file, index) => {
-                          const FileIcon = getFileIcon(file.type);
-                          return (
-                            <div
-                              key={index}
-                              className="flex items-center gap-2 p-2 bg-black/10 rounded-lg"
-                            >
-                              {file.type.startsWith("image/") ? (
-                                <img
-                                  src={file.url}
-                                  alt={file.name}
-                                  className="w-12 h-12 rounded object-cover"
-                                />
-                              ) : (
-                                <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
-                                  <FileIcon className="w-4 h-4 text-blue-600" />
-                                </div>
-                              )}
-                              <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">
-                                  {file.name}
-                                </p>
-                                <p className="text-xs opacity-70">
-                                  {formatFileSize(file.size)}
-                                </p>
-                              </div>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    )}
-
-                    <p className="text-sm sm:text-base whitespace-pre-wrap">
-                      {message.text}
-                    </p>
-
-                    <div className="flex items-center justify-between border-black/10">
-                      <button
-                        onClick={() => copyMessage(message.text)}
-                        className={cn(
-                          "opacity-0 opacity-100 transition-opacity p-1 rounded hover:bg-black/10",
-                          message.isUser ? "text-gray-500" : "text-gray-500"
-                        )}
-                      >
-                        <svg
-                          className="w-4 h-4"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
-                          />
-                        </svg>
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
-
-              {isLoading && (
-                <div className="flex gap-3 max-w-[85%] mr-auto">
-                  <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
-                    <div className="flex space-x-1">
-                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.1s" }}
-                      ></div>
-                      <div
-                        className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
-                        style={{ animationDelay: "0.2s" }}
-                      ></div>
-                    </div>
-                  </div>
+              {messages.length === 0 && (
+                <div className="text-center mb-6 py-10">
+                  <p className="font-bold text-xl">Hi, how can I help you?</p>
                 </div>
               )}
-            </div>
-          </div>
-        </div>
 
-        {/* Bottom Input Area */}
-        <div
-          className="flex-shrink-0 bg-white p-3 sm:p-4"
-          style={{ paddingBottom: "41px" }}
-        >
-          <div className="max-w-4xl mx-auto">
-            {/* Attached Files Preview */}
-            {attachedFiles.length > 0 && (
-              <div className="mb-3">
-                <div className="flex flex-wrap gap-2">
-                  {attachedFiles.map((file) => {
-                    const FileIcon = getFileIcon(file.type);
-                    return (
-                      <div
-                        key={file.id}
-                        className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 pr-3 group max-w-full"
-                      >
-                        {file.type.startsWith("image/") ? (
-                          <img
-                            src={file.url}
-                            alt={file.name}
-                            className="w-8 h-8 rounded object-cover flex-shrink-0"
-                          />
-                        ) : (
-                          <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center flex-shrink-0">
-                            <FileIcon className="w-4 h-4 text-blue-600" />
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-gray-900 truncate">
-                            {file.name}
-                          </p>
-                          <p className="text-xs text-gray-500">
-                            {formatFileSize(file.size)}
-                          </p>
+              {/* Messages */}
+              <div className="space-y-4 py-10">
+                {messages.map((message) => (
+                  <div
+                    key={message.id}
+                    className={cn(
+                      "flex gap-3 max-w-[85%]"
+                      // message.isUser ? "ml-auto justify-end" : "mr-auto"
+                    )}
+                  >
+                    <div
+                      className={cn(
+                        "px-4 py-2 group relative",
+                        message.isUser ? "border-left " : "border-right"
+                      )}
+                    >
+                      {message.files && message.files.length > 0 && (
+                        <div className="mb-3 space-y-2">
+                          {message.files.map((file, index) => {
+                            const FileIcon = getFileIcon(file.type);
+                            return (
+                              <div
+                                key={index}
+                                className="flex items-center gap-2 p-2 bg-black/10 rounded-lg"
+                              >
+                                {file.type.startsWith("image/") ? (
+                                  <img
+                                    src={file.url}
+                                    alt={file.name}
+                                    className="w-12 h-12 rounded object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center">
+                                    <FileIcon className="w-4 h-4 text-blue-600" />
+                                  </div>
+                                )}
+                                <div className="flex-1 min-w-0">
+                                  <p className="text-sm font-medium truncate">
+                                    {file.name}
+                                  </p>
+                                  <p className="text-xs opacity-70">
+                                    {formatFileSize(file.size)}
+                                  </p>
+                                </div>
+                              </div>
+                            );
+                          })}
                         </div>
+                      )}
+
+                      <p className="text-sm sm:text-base whitespace-pre-wrap">
+                        {message.text}
+                      </p>
+
+                      <div className="flex items-center justify-between border-black/10">
                         <button
-                          onClick={() => removeFile(file.id)}
-                          className="opacity-70 sm:opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded touch-manipulation"
+                          onClick={() => copyMessage(message.text)}
+                          className={cn(
+                            "opacity-0 opacity-100 transition-opacity p-1 rounded hover:bg-black/10",
+                            message.isUser ? "text-gray-500" : "text-gray-500"
+                          )}
                         >
-                          <X className="w-3 h-3 text-gray-500" />
+                          <svg
+                            className="w-4 h-4"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+                            />
+                          </svg>
                         </button>
                       </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+                    </div>
+                  </div>
+                ))}
 
-            <div
-              className={cn(
-                "rounded-xl border transition-colors border-textbox-color"
+                {isLoading && (
+                  <div className="flex gap-3 max-w-[85%] mr-auto">
+                    <div className="bg-white border border-gray-200 rounded-2xl px-4 py-3">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                        <div
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.1s" }}
+                        ></div>
+                        <div
+                          className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"
+                          style={{ animationDelay: "0.2s" }}
+                        ></div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+
+          {/* Bottom Input Area */}
+          <div
+            className="flex-shrink-0 bg-white p-3 sm:p-4"
+            style={{ paddingBottom: "41px" }}
+          >
+            <div className="max-w-4xl mx-auto">
+              {/* Attached Files Preview */}
+              {attachedFiles.length > 0 && (
+                <div className="mb-3">
+                  <div className="flex flex-wrap gap-2">
+                    {attachedFiles.map((file) => {
+                      const FileIcon = getFileIcon(file.type);
+                      return (
+                        <div
+                          key={file.id}
+                          className="flex items-center gap-2 bg-gray-50 rounded-lg p-2 pr-3 group max-w-full"
+                        >
+                          {file.type.startsWith("image/") ? (
+                            <img
+                              src={file.url}
+                              alt={file.name}
+                              className="w-8 h-8 rounded object-cover flex-shrink-0"
+                            />
+                          ) : (
+                            <div className="w-8 h-8 bg-blue-100 rounded flex items-center justify-center flex-shrink-0">
+                              <FileIcon className="w-4 h-4 text-blue-600" />
+                            </div>
+                          )}
+                          <div className="flex-1 min-w-0">
+                            <p className="text-sm font-medium text-gray-900 truncate">
+                              {file.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {formatFileSize(file.size)}
+                            </p>
+                          </div>
+                          <button
+                            onClick={() => removeFile(file.id)}
+                            className="opacity-70 sm:opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-gray-200 rounded touch-manipulation"
+                          >
+                            <X className="w-3 h-3 text-gray-500" />
+                          </button>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
               )}
-            >
-              {/* Input Section */}
-              <div className="p-3 sm:p-4 relative">
-                <textarea
-                  placeholder="Ask me anything about your job..."
-                  value={inputText}
-                  onChange={(e) => setInputText(e.target.value)}
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter" && !e.shiftKey) {
-                      e.preventDefault();
-                      sendMessage();
-                    }
-                  }}
-                  className="w-full resize-none border-none outline-none text-base sm:text-lg placeholder-gray-500 leading-relaxed bg-transparent"
-                  disabled={isLoading}
-                />
-              </div>
 
-              {/* Bottom Actions */}
-              <div className="px-3 sm:px-4 pb-3 sm:pb-4 flex items-center justify-between">
-                <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
-                  {/* Paperclip Button */}
-
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => setIsAttachOpen(!isAttachOpen)}
-                  >
-                    <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Attach
-                    </span>
-                  </Button>
-
-                  {/* Topup Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() =>{}}
-                  >
-                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Profile
-                    </span>
-                  </Button>
-
-                  {/* Preference Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => navigate("/profilepreference")}
-                  >
-                    <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Preference
-                    </span>
-                  </Button>
-
-                   {/* Topup Button */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => navigate("/payment")}
-                  >
-                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                    <span className="text-sm sm:text-base text-gray-700">
-                      Topup
-                    </span>
-                  </Button>
-
-                  {/* Login/Profile Button */}
-                  {!userState.isLoggedIn ? (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() => setIsLoginOpen(!isLoginOpen)}
-                    >
-                      <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                      <span className="text-sm sm:text-base text-gray-700">
-                        Login
-                      </span>
-                    </Button>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() => {
-                        resetUser();
-                        toast.success("Logged out successfully");
-                      }}
-                    >
-                      <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
-                      <span className="text-sm sm:text-base text-gray-700">
-                        Logout
-                      </span>
-                    </Button>
-                  )}
+              <div
+                className={cn(
+                  "rounded-xl border transition-colors border-textbox-color"
+                )}
+              >
+                {/* Input Section */}
+                <div className="p-3 sm:p-4 relative">
+                  <textarea
+                    placeholder="Ask me anything about your job..."
+                    value={inputText}
+                    onChange={(e) => setInputText(e.target.value)}
+                    onKeyPress={(e) => {
+                      if (e.key === "Enter" && !e.shiftKey) {
+                        e.preventDefault();
+                        sendMessage();
+                      }
+                    }}
+                    className="w-full resize-none border-none outline-none text-base sm:text-lg placeholder-gray-500 leading-relaxed bg-transparent"
+                    disabled={isLoading}
+                  />
                 </div>
 
-                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
-                  {/* Send Button */}
-                  <Button
-                    className="text-default-color text-default-color:hover text-white rounded-xl w-9 h-9 sm:w-10 sm:h-10 p-0 touch-manipulation"
-                    disabled={!inputText.trim() || isLoading}
-                    onClick={sendMessage}
-                  >
-                    <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
-                  </Button>
+                {/* Bottom Actions */}
+                <div className="px-3 sm:px-4 pb-3 sm:pb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto">
+                    {/* Paperclip Button */}
+
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() => setIsAttachOpen(!isAttachOpen)}
+                    >
+                      <Paperclip className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Attach
+                      </span>
+                    </Button>
+
+                    {/* Topup Button */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() =>
+                        openModal({
+                          title: "Profile",
+                          content: <ProfileForm />,
+                          submitLbl: "Save Profile",
+                          onSubmit: handleFormSubmit,
+                          footer: true,
+                        })
+                      }
+                    >
+                      <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Profile
+                      </span>
+                    </Button>
+
+                    {/* Preference Button */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      
+                      onClick={() =>
+                        openModal({
+                          title: "Preference",
+                          content: <PreferenceForm />,
+                          submitLbl: "Save Preference",
+                          onSubmit: handleFormSubmit,
+                          footer: true,
+                        })
+                      }
+                    >
+                      <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Preference
+                      </span>
+                    </Button>
+
+                    {/* Topup Button */}
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                      onClick={() =>
+                        openModal({
+                          title: "Top Up",
+                          content: <TopUpForm />,
+                          submitLbl: "Save Topup",
+                          onSubmit: handleFormSubmit,
+                          footer: true,
+                        })
+                      }
+                    >
+                      <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                      <span className="text-sm sm:text-base text-gray-700">
+                        Topup
+                      </span>
+                    </Button>
+
+                    {/* Login/Profile Button */}
+                    {!userState.isLoggedIn ? (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                        onClick={() => setIsLoginOpen(!isLoginOpen)}
+                      >
+                        <LogIn className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                        <span className="text-sm sm:text-base text-gray-700">
+                          Login
+                        </span>
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                        onClick={() => {
+                          resetUser();
+                          toast.success("Logged out successfully");
+                        }}
+                      >
+                        <LogOut className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                        <span className="text-sm sm:text-base text-gray-700">
+                          Logout
+                        </span>
+                      </Button>
+                    )}
+                  </div>
+
+                  <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-2">
+                    {/* Send Button */}
+                    <Button
+                      className="text-default-color text-default-color:hover text-white rounded-xl w-9 h-9 sm:w-10 sm:h-10 p-0 touch-manipulation"
+                      disabled={!inputText.trim() || isLoading}
+                      onClick={sendMessage}
+                    >
+                      <ArrowUp className="w-4 h-4 sm:w-5 sm:h-5" />
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Attach Popup */}
-        {isAttachOpen && (
-          <>
-            <div
-              className="fixed inset-0 z-40"
-              onClick={() => setIsAttachOpen(false)}
-            />
-            <div className="fixed bottom-24 sm:bottom-28 left-2 sm:left-8 right-2 sm:right-auto w-auto sm:w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
-              <div className="p-4">
-                <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
-                <div className="space-y-2">
-                  {userState.isProfileUploaded ? (
-                    <button
-                      onClick={() => {
-                        setIsAttachOpen(false);
-                        setFileViewerPopup(true);
-                      }}
-                      className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                    >
-                      <User className="w-4 h-4 text-orange-500" />
-                      <div>
-                        <span className="text-sm font-medium">Profile</span>
-                      </div>
-                    </button>
-                  ) : (
+          {/* Attach Popup */}
+          {isAttachOpen && (
+            <>
+              <div
+                className="fixed inset-0 z-40"
+                onClick={() => setIsAttachOpen(false)}
+              />
+              <div className="fixed bottom-24 sm:bottom-28 left-2 sm:left-8 right-2 sm:right-auto w-auto sm:w-72 bg-white rounded-xl shadow-xl border border-gray-200 z-50">
+                <div className="p-4">
+                  <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
+                  <div className="space-y-2">
+                    {userState.isProfileUploaded ? (
+                      <button
+                        onClick={() => {
+                          setIsAttachOpen(false);
+                          setFileViewerPopup(true);
+                        }}
+                        className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <User className="w-4 h-4 text-orange-500" />
+                        <div>
+                          <span className="text-sm font-medium">Profile</span>
+                        </div>
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => {
+                          const input = document.createElement("input");
+                          input.type = "file";
+                          input.accept =
+                            ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
+                          input.multiple = true;
+                          input.onchange = (e) =>
+                            handleFileUpload(e.target.files);
+                          input.click();
+                          setIsAttachOpen(false);
+                        }}
+                        className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
+                      >
+                        <FileText className="w-4 h-4 text-orange-500" />
+                        <div>
+                          <span className="text-sm font-medium">
+                            Upload Documents
+                          </span>
+                          <p className="text-xs text-gray-500">PDF, DOC</p>
+                        </div>
+                      </button>
+                    )}
+
                     <button
                       onClick={() => {
                         const input = document.createElement("input");
                         input.type = "file";
-                        input.accept =
-                          ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
+                        input.accept = "image/*";
                         input.multiple = true;
                         input.onchange = (e) =>
                           handleFileUpload(e.target.files);
@@ -524,64 +598,45 @@ const HomePage = () => {
                       }}
                       className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
                     >
-                      <FileText className="w-4 h-4 text-orange-500" />
+                      <Image className="w-4 h-4 text-green-500" />
                       <div>
                         <span className="text-sm font-medium">
-                          Upload Documents
+                          Upload Images
                         </span>
-                        <p className="text-xs text-gray-500">PDF, DOC</p>
+                        <p className="text-xs text-gray-500">
+                          JPG, PNG, GIF, WebP
+                        </p>
                       </div>
                     </button>
-                  )}
 
-                  <button
-                    onClick={() => {
-                      const input = document.createElement("input");
-                      input.type = "file";
-                      input.accept = "image/*";
-                      input.multiple = true;
-                      input.onchange = (e) => handleFileUpload(e.target.files);
-                      input.click();
-                      setIsAttachOpen(false);
-                    }}
-                    className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                  >
-                    <Image className="w-4 h-4 text-green-500" />
-                    <div>
-                      <span className="text-sm font-medium">Upload Images</span>
-                      <p className="text-xs text-gray-500">
-                        JPG, PNG, GIF, WebP
-                      </p>
-                    </div>
-                  </button>
-
-                  <div className="border-t border-gray-100 pt-2 mt-2">
-                    <div className="text-xs text-gray-500 px-3 py-1">
-                      Maximum file size: 10MB per file
+                    <div className="border-t border-gray-100 pt-2 mt-2">
+                      <div className="text-xs text-gray-500 px-3 py-1">
+                        Maximum file size: 10MB per file
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
 
-        {/* Mobile Login Popup */}
-        {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
+          {/* Mobile Login Popup */}
+          {isLoginOpen && <LoginForm setIsLoginOpen={setIsLoginOpen} />}
 
-        {/* File Viewer Popup */}
-        {fileViewerPopup && (
-          <FileViewerPopup
-            showpop={fileViewerPopup}
-            onClose={() => setFileViewerPopup(false)}
-          />
-        )}
-      </main>
+          {/* File Viewer Popup */}
+          {fileViewerPopup && (
+            <FileViewerPopup
+              showpop={fileViewerPopup}
+              onClose={() => setFileViewerPopup(false)}
+            />
+          )}
+        </main>
 
-      <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
-        Copyright &copy; 2025 JD All rights reserved.
-      </footer>
-    </div>
+        <footer class="fixed bottom-0 w-full  text-center py-2 bg-card border-t border-border z-100">
+          Copyright &copy; 2025 JD All rights reserved.
+        </footer>
+      </div>
+    </>
   );
 };
 
