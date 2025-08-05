@@ -405,11 +405,11 @@ const HomePage = () => {
                     variant="ghost"
                     size="icon"
                     className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                    onClick={() => navigate("/payment")}
+                    onClick={() =>{}}
                   >
-                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
-                      Topup
+                      Profile
                     </span>
                   </Button>
 
@@ -423,6 +423,19 @@ const HomePage = () => {
                     <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                     <span className="text-sm sm:text-base text-gray-700">
                       Preference
+                    </span>
+                  </Button>
+
+                   {/* Topup Button */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
+                    onClick={() => navigate("/payment")}
+                  >
+                    <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
+                    <span className="text-sm sm:text-base text-gray-700">
+                      Topup
                     </span>
                   </Button>
 
