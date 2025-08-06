@@ -5,7 +5,7 @@ const Modal = ({ isOpen, onClose, title, children, onSubmit, footer, submitLbl }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 px-4 sm:px-6 md:px-10">
-      <div className="bg-white rounded-lg shadow-lg w-full  max-h-[70vh] flex flex-col overflow-hidden">
+      <div className="bg-white rounded-lg shadow-lg w-full  max-h-[70vh] max-w-[900px] flex flex-col overflow-hidden">
         {/* Fixed Header */}
         <div className="flex justify-between items-center border-b px-4 py-3 bg-white sticky top-0 z-10">
           <h2 className="text-lg font-semibold">{title}</h2>
