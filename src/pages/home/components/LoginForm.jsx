@@ -3,9 +3,13 @@ import Button from "../../../components/ui/Button";
 import { X, Phone, Check, MoveRight, CircleAlert } from "lucide-react";
 import { useUser } from "../../../context/userContext";
 import { fetchData, postData } from "../../../utils/fetchData";
+import { useModal } from "../../../context/ModalContext";
+import Help from "./Help";
+import Policy from "./Policy";
 
 const LoginForm = ({ setIsLoginOpen }) => {
   const { userState, updateUser } = useUser();
+  const { openModal } = useModal();
   const isMockData = false;
   const [error, setError] = useState("");
 
@@ -87,9 +91,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                 <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <Phone className="w-8 h-8 text-default-color" />
                 </div>
-                <p className="text-gray-600">
-                  Enter your mobile number
-                </p>
+                <p className="text-gray-600">Enter your mobile number</p>
               </div>
 
               <div>
@@ -152,8 +154,18 @@ const LoginForm = ({ setIsLoginOpen }) => {
 
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                   By continuing, you agree to our <a onClick={() => { }} className="text-default-color cursor-pointer">Terms of Service</a> and <a onClick={() => { }} className="text-default-color cursor-pointer">Privacy
-                  Policy</a>
+                  By continuing, you agree to our{" "}
+                  <a
+                    onClick={() => {
+                      openModal({
+                        title: "Terms & Conditions",
+                        content: <Policy />,
+                      });
+                    }}
+                    className="text-default-color cursor-pointer"
+                  >
+                    Terms of Service and Privacy Policy
+                  </a>
                 </p>
               </div>
             </div>
@@ -301,8 +313,18 @@ const LoginForm = ({ setIsLoginOpen }) => {
 
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                    By continuing, you agree to our <a onClick={() => { }} className="text-default-color cursor-pointer">Terms of Service</a> and <a onClick={() => { }} className="text-default-color cursor-pointer">Privacy
-                  Policy</a>
+                  By continuing, you agree to our{" "}
+                  <a
+                    onClick={() => {
+                      openModal({
+                        title: "Terms & Conditions",
+                        content: <Policy />,
+                      });
+                    }}
+                    className="text-default-color cursor-pointer"
+                  >
+                    Terms of Service and Privacy Policy
+                  </a>
                 </p>
               </div>
             </div>

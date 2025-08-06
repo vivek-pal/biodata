@@ -58,6 +58,7 @@ const HomePage = () => {
     formData.append("file", file);
 
     updateUser({ isProfileUploaded: true });
+    toast.success("File uploaded successfully!");
     return;
     try {
       // Replace with your actual endpoint
@@ -547,20 +548,7 @@ const HomePage = () => {
                 <div className="p-4">
                   <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
                   <div className="space-y-2">
-                    {userState.isProfileUploaded ? (
-                      <button
-                        onClick={() => {
-                          setIsAttachOpen(false);
-                          setFileViewerPopup(true);
-                        }}
-                        className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
-                      >
-                        <User className="w-4 h-4 text-orange-500" />
-                        <div>
-                          <span className="text-sm font-medium">Profile</span>
-                        </div>
-                      </button>
-                    ) : (
+                    {(
                       <button
                         onClick={() => {
                           const input = document.createElement("input");

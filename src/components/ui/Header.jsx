@@ -1,24 +1,43 @@
 import React, { useEffect, useState } from "react";
 import Icon from "../AppIcon";
-import { Menu, User, AlignRightIcon, MoveLeft, MoveLeftIcon, ArrowLeft } from "lucide-react";
+import {
+  Menu,
+  User,
+  AlignRightIcon,
+  MoveLeft,
+  MoveLeftIcon,
+  ArrowLeft,
+} from "lucide-react";
 import { FileText, DollarSign, HelpCircle, LogOut, LogIn } from "lucide-react";
 import { toast } from "sonner";
 import { useUser } from "../../context/userContext";
 import LoginForm from "../../pages/home/components/LoginForm";
 import { APP_NAME } from "../../constant/index";
 import { Link } from "react-router-dom";
+import { useModal } from "../../context/ModalContext";
+import Help from "../../pages/home/components/Help";
+import Policy from "../../pages/home/components/Policy";
 
-const Header = ({isChild}) => {
+
+const Header = ({ isChild }) => {
+  const { openModal } = useModal();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { userState, resetUser } = useUser();
   const [isLoginOpen, setIsLoginOpen] = useState(false);
 
   const defaultMenuItems = [
-    // { icon: DollarSign, label: "Topup", href: "/biodata/#/payment" },
-    { icon: HelpCircle, label: "Help & Support", href: "/biodata/#/help" },
-    { icon: FileText, label: "Terms & Conditions", href: "/biodata/#/policy" },
-    
-    // { icon: LogIn, label: "Login", href: "/#/login", id: "login" },
+    {
+      id: "help",
+      icon: HelpCircle,
+      label: "Help & Support",
+      content: <Help />
+    },
+    {
+      id: "policy",
+      icon: FileText,
+      label: "Terms & Conditions",
+      content: <Policy/>
+    }
   ];
 
   const [menuItems, setMenuItems] = useState(defaultMenuItems);
@@ -52,15 +71,18 @@ const Header = ({isChild}) => {
   return (
     <header className="fixed top-0 left-0 right-0 bg-card border-b border-border z-100">
       <div className="max-w-7xl mx-auto h-16 flex items-center justify-between">
-
         {/* Logo */}
         <div className="flex items-center gap-1 sm:gap-2">
           <div className="flex items-center gap-1 sm:gap-2 ml-2">
-             {isChild ? <Link to="/" className="">
-              <ArrowLeft />
-            </Link> : null}
+            {isChild ? (
+              <Link to="/" className="">
+                <ArrowLeft />
+              </Link>
+            ) : null}
             <Icon name="FileUser" size={20} />
-            <span className="text-lg sm:text-xl font-bold text-black">{APP_NAME}</span>
+            <span className="text-lg sm:text-xl font-bold text-black">
+              {APP_NAME}
+            </span>
           </div>
         </div>
 
@@ -111,18 +133,27 @@ const Header = ({isChild}) => {
                 <a
                   key={index}
                   id={item.id}
+                  label={item.label}
+                  content={item.content}
                   href={item.href}
                   className="flex items-center gap-3 px-4 py-3 text-gray-700 hover:bg-gray-50 transition-colors text-sm"
                   onClick={(e) => {
+                    e.preventDefault();
                     if (e.target.id === "login" || e.target.id === "logout") {
-                      e.preventDefault();
+                      
 
                       if (e.target.id === "logout") {
-                        resetUser()
+                        resetUser();
                         toast.success("Logged out successfully");
                       } else {
                         setIsLoginOpen(true);
                       }
+                    } else {
+                      openModal({
+                        title: e.target.innerText,
+                        content: defaultMenuItems.find((item) => item.id === e.target.id).content,
+                        footer: false,
+                      });
                     }
 
                     setIsMenuOpen(false);
