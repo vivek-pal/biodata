@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { upiConfig } from "../../config";
 import Header from "../../components/ui/Header";
 import Footer from "../../components/ui/Footer";
-// import PriceListing from "../home/components/PriceListing";
+
 import { fetchPricingData } from "../../services/serviceApi";
 
 export default function Payment() {
