@@ -30,7 +30,7 @@ const endpoints = {
   },
   retrieveImages: {
     method: "get",
-    URI: "/profile/v1/img/download{cid}/{pid}/{imgid}",
+    URI: "/profile/v1/img/download/{cid}/{pid}/{imgid}",
     // /{cid}/{pid}/{imgid}
   },
   getMasterData: {

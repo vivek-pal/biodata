@@ -106,6 +106,10 @@
   border-left: 4px solid #3468ad
 }
 
+.border-default-color {
+  border-color: #3468ad;
+}
+
 .border-textbox-color {
   border: 2px solid #3468ad;
 }

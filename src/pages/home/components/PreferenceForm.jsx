@@ -59,7 +59,7 @@ const PreferenceForm = () => {
                 <div key={field.name} className="relative">
                   <label
                     htmlFor={field.name}
-                    className="block text-default-color font-medium mb-1"
+                    className="block font-medium mb-1"
                   >
                     {field.label}:
                   </label>
@@ -73,7 +73,7 @@ const PreferenceForm = () => {
                       onFocus={() => setFocusedField(field.name)}
                       onBlur={() => setFocusedField(null)}
                       autoComplete="off"
-                      className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#3468ad]"
                     />
                   ) : (
                     <input
@@ -84,13 +84,13 @@ const PreferenceForm = () => {
                       onFocus={() => setFocusedField(field.name)}
                       onBlur={() => setFocusedField(null)}
                       autoComplete="off"
-                      className="w-full border border-blue-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      className="w-full border  rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-[#3468ad]"
                     />
                   )}
 
                   {/* Tooltip */}
                   {focusedField === field.name && tooltip && (
-                    <div className="absolute left-0 mt-1 bg-blue-100 text-default-color text-xs rounded p-2 border border-blue-300 shadow-sm z-10">
+                    <div className="absolute left-0 mt-1 bg-blue-100 text-xs rounded p-2 border shadow-sm z-10">
                       {tooltip}
                     </div>
                   )}
@@ -107,7 +107,7 @@ const PreferenceForm = () => {
           </form>
 
           {submittedData && (
-            <div className="mt-8 bg-blue-100 border border-blue-300 p-4 rounded-md">
+            <div className="mt-8 bg-blue-100 border  p-4 rounded-md">
               <h2 className="text-lg font-semibold text-blue-700 mb-2">
                 Submitted Data
               </h2>

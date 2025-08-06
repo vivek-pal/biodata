@@ -3,8 +3,8 @@ import React from "react";
 export default function PriceListing({ pricingData }) {
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full text-sm border border-blue-200 rounded">
-        <thead className="bg-blue-100 text-default-color">
+      <table className="min-w-full text-sm border border-default-color rounded">
+        <thead className="bg-primary text-white">
           <tr>
             <th className="text-left px-4 py-2 border-b">Service</th>
             <th className="text-left px-4 py-2 border-b">Price</th>

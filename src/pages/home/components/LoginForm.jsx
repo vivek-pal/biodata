@@ -88,7 +88,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                   <Phone className="w-8 h-8 text-default-color" />
                 </div>
                 <p className="text-gray-600">
-                  Enter your mobile number & PIN number
+                  Enter your mobile number
                 </p>
               </div>
 
@@ -98,7 +98,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                     disabled
                     value={countryCode}
                     onChange={(e) => setCountryCode(e.target.value)}
-                    className="px-2 sm:px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm sm:text-base"
+                    className="px-2 sm:px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] bg-white text-sm sm:text-base"
                   >
                     <option value="+1">🇺🇸 +1</option>
                     <option selected value="+91">
@@ -116,7 +116,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                         e.target.value.replace(/\D/g, "").slice(0, 10)
                       )
                     }
-                    className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                    className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] text-sm sm:text-base"
                     placeholder="Enter mobile number"
                   />
                 </div>
@@ -152,8 +152,8 @@ const LoginForm = ({ setIsLoginOpen }) => {
 
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                  By continuing, you agree to our Terms of Service and Privacy
-                  Policy
+                   By continuing, you agree to our <a onClick={() => { }} className="text-default-color cursor-pointer">Terms of Service</a> and <a onClick={() => { }} className="text-default-color cursor-pointer">Privacy
+                  Policy</a>
                 </p>
               </div>
             </div>
@@ -179,7 +179,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                             e.target.value.replace(/\D/g, "").slice(0, 4)
                           );
                         }}
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] text-sm sm:text-base"
                         placeholder="Enter Your PIN"
                       />
                     </div>
@@ -192,7 +192,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                       <input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] text-sm sm:text-base"
                         placeholder="Name"
                       />
                     </div>
@@ -207,7 +207,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                             e.target.value.replace(/\D/g, "").slice(0, 4)
                           )
                         }
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] text-sm sm:text-base"
                         placeholder="Set PIN"
                       />
                     </div>
@@ -223,7 +223,7 @@ const LoginForm = ({ setIsLoginOpen }) => {
                             e.target.value.replace(/\D/g, "").slice(0, 4)
                           )
                         }
-                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base"
+                        className="flex-1 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#3468ad] text-sm sm:text-base"
                         placeholder="Confirm PIN"
                       />
                     </div>
@@ -301,8 +301,8 @@ const LoginForm = ({ setIsLoginOpen }) => {
 
               <div className="text-center">
                 <p className="text-xs text-gray-500">
-                  By continuing, you agree to our Terms of Service and Privacy
-                  Policy
+                    By continuing, you agree to our <a onClick={() => { }} className="text-default-color cursor-pointer">Terms of Service</a> and <a onClick={() => { }} className="text-default-color cursor-pointer">Privacy
+                  Policy</a>
                 </p>
               </div>
             </div>

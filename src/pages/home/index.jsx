@@ -476,11 +476,11 @@ const HomePage = () => {
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
                       onClick={() =>
                         openModal({
-                          title: "Top Up",
+                          title: "Account Balance / Topup / Pricing",
                           content: <TopUpForm />,
-                          submitLbl: "Save Topup",
-                          onSubmit: handleFormSubmit,
-                          footer: true,
+                          // submitLbl: "Save Topup",
+                          // onSubmit: handleFormSubmit,
+                          // footer: true,
                         })
                       }
                     >

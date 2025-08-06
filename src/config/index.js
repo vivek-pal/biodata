@@ -1,9 +1,7 @@
-const upiConfig = () => {
-    return {
-        upiId: "your-upi-id@upi",
-        name: "Your Name",
-        currency: "INR"
-    };
-}
+const upiConfig = {
+  upiId: "john-upi-id@upi",
+  name: "John Doe",
+  currency: "INR",
+};
 
 export { upiConfig };
