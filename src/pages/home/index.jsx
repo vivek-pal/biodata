@@ -44,6 +44,7 @@ const HomePage = () => {
   const [isPrefOpen, setIsPrefOpen] = useState(false);
   const [isTopupOpen, setIsTopupOpen] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
+  const [profileWarningShow, setProfileWarningShow] = useState(false);
 
   const handleFormSubmit = (data) => {
     console.log("Form submitted:", data);
@@ -111,75 +112,72 @@ const HomePage = () => {
   const sendMessage = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) return;
 
-    setShowLogin(true); 
+    setShowLogin(true);
 
-    if(userState.isLoggedIn) {
-
+    if (userState.isLoggedIn) {
       const newMessage = {
-      // id.now().toString(),
-      text: inputText,
-      isUser: true,
-      timestamp: new Date(),
-      // files: attachedFiles.length > 0 ? [...attachedFiles] : undefined,
-    };
+        // id.now().toString(),
+        text: inputText,
+        isUser: true,
+        timestamp: new Date(),
+        // files: attachedFiles.length > 0 ? [...attachedFiles] : undefined,
+      };
 
-    setMessages((prev) => [...prev, newMessage]);
-    const currentMessage = inputText;
-    setInputText("");
-    // setAttachedFiles([]);
-    setIsLoading(true);
+      setMessages((prev) => [...prev, newMessage]);
+      const currentMessage = inputText;
+      setInputText("");
+      // setAttachedFiles([]);
+      setIsLoading(true);
 
-    try {
-      // Try to call the API endpoint first
-      const response = await fetch("/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          message: currentMessage,
-          files: attachedFiles,
-        }),
-      });
+      try {
+        // Try to call the API endpoint first
+        const response = await fetch("/api/chat", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            message: currentMessage,
+            files: attachedFiles,
+          }),
+        });
 
-      let responseText = "";
+        let responseText = "";
 
-      if (response.ok) {
-        const data = await response.json();
-        responseText =
-          data.response ||
-          data.message ||
-          "I understand you want to build something! Here are some suggestions based on your request:\n\n• Consider the target audience and platform\n• Think about the core features you need\n• Plan the user experience and interface\n• Choose the right technology stack\n\nWould you like me to help you with any specific aspect of your project?";
-      } else {
-        // Fallback response if API fails
-        responseText = generateFallbackResponse(currentMessage);
+        if (response.ok) {
+          const data = await response.json();
+          responseText =
+            data.response ||
+            data.message ||
+            "I understand you want to build something! Here are some suggestions based on your request:\n\n• Consider the target audience and platform\n• Think about the core features you need\n• Plan the user experience and interface\n• Choose the right technology stack\n\nWould you like me to help you with any specific aspect of your project?";
+        } else {
+          // Fallback response if API fails
+          responseText = generateFallbackResponse(currentMessage);
+        }
+
+        const botMessage = {
+          id: (Date.now() + 1).toString(),
+          text: responseText,
+          isUser: false,
+          timestamp: new Date(),
+        };
+
+        setMessages((prev) => [...prev, botMessage]);
+      } catch (error) {
+        console.log("API not available, using fallback response");
+        const fallbackResponse = generateFallbackResponse(currentMessage);
+
+        const botMessage = {
+          id: (Date.now() + 1).toString(),
+          text: fallbackResponse,
+          isUser: false,
+          timestamp: new Date(),
+        };
+        setMessages((prev) => [...prev, botMessage]);
+      } finally {
+        setIsLoading(false);
       }
-
-      const botMessage = {
-        id: (Date.now() + 1).toString(),
-        text: responseText,
-        isUser: false,
-        timestamp: new Date(),
-      };
-
-      setMessages((prev) => [...prev, botMessage]);
-    } catch (error) {
-      console.log("API not available, using fallback response");
-      const fallbackResponse = generateFallbackResponse(currentMessage);
-
-      const botMessage = {
-        id: (Date.now() + 1).toString(),
-        text: fallbackResponse,
-        isUser: false,
-        timestamp: new Date(),
-      };
-      setMessages((prev) => [...prev, botMessage]);
-    } finally {
-      setIsLoading(false);
     }
-
-    }
-
   };
 
   const generateFallbackResponse = (message) => {
@@ -396,19 +394,39 @@ const HomePage = () => {
                 </div>
               )}
 
-              {!useState.isLoggedIn && showLogin && <div className="text-red-600 font-semibold mb-2">
-                Please login first.{" "}
-                <a
-                  href="/login"
-                  className="underline text-red-700 hover:text-red-800"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsLoginOpen(true)
-                  }}
-                >
-                  Login
-                </a>
-              </div>}
+              {!useState.isLoggedIn && showLogin && (
+                <div className="text-red-600 font-semibold mb-2">
+                  Please login first.{" "}
+                  <a
+                    href="/login"
+                    className="underline text-red-700 hover:text-red-800"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setIsLoginOpen(true);
+                    }}
+                  >
+                    Login
+                  </a>
+                </div>
+              )}
+
+              {useState.isLoggedIn &&
+                !useState.isProfileUploaded &&
+                profileWarningShow && (
+                  <div className="text-red-600 font-semibold mb-2">
+                    Please upload your profile first.{" "}
+                    <a
+                      href="/login"
+                      className="underline text-red-700 hover:text-red-800"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setIsAttachOpen(true);
+                      }}
+                    >
+                      Login
+                    </a>
+                  </div>
+                )}
 
               <div
                 className={cn(
@@ -454,15 +472,21 @@ const HomePage = () => {
                       variant="ghost"
                       size="icon"
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() =>
-                        openModal({
-                          title: "Profile",
-                          content: <ProfileForm />,
-                          submitLbl: "Save Profile",
-                          onSubmit: handleFormSubmit,
-                          footer: true,
-                        })
-                      }
+                      onClick={() => {
+                        if (userState.isProfileUploaded) {
+                          openModal({
+                            title: "Profile",
+                            content: <ProfileForm />,
+                            submitLbl: "Save Profile",
+                            onSubmit: handleFormSubmit,
+                            footer: true,
+                          });
+                        } else if (!userState.isLoggedIn) {
+                          setShowLogin(true);
+                        } else {
+                          setProfileWarningShow(true);
+                        }
+                      }}
                     >
                       <User className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                       <span className="text-sm sm:text-base text-gray-700">
@@ -475,15 +499,21 @@ const HomePage = () => {
                       variant="ghost"
                       size="icon"
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() =>
-                        openModal({
-                          title: "Preference",
-                          content: <PreferenceForm />,
-                          submitLbl: "Save Preference",
-                          onSubmit: handleFormSubmit,
-                          footer: true,
-                        })
-                      }
+                      onClick={() => {
+                        if (userState.isProfileUploaded) {
+                          openModal({
+                            title: "Preference",
+                            content: <PreferenceForm />,
+                            submitLbl: "Save Preference",
+                            onSubmit: handleFormSubmit,
+                            footer: true,
+                          });
+                        } else if (!userState.isLoggedIn) {
+                          setShowLogin(true);
+                        } else {
+                          setProfileWarningShow(true);
+                        }
+                      }}
                     >
                       <Settings2 className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                       <span className="text-sm sm:text-base text-gray-700">
@@ -496,15 +526,18 @@ const HomePage = () => {
                       variant="ghost"
                       size="icon"
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      onClick={() =>
-                        openModal({
-                          title: "Account Balance / Topup / Pricing",
-                          content: <TopUpForm />,
-                          // submitLbl: "Save Topup",
-                          // onSubmit: handleFormSubmit,
-                          // footer: true,
-                        })
-                      }
+                      onClick={() => {
+                        if (userState.isProfileUploaded) {
+                          openModal({
+                            title: "Account Balance / Topup / Pricing",
+                            content: <TopUpForm />,
+                          });
+                        } else if (!userState.isLoggedIn) {
+                          setShowLogin(true);
+                        } else {
+                          setProfileWarningShow(true);
+                        }
+                      }}
                     >
                       <DollarSign className="w-4 h-4 sm:w-5 sm:h-5 text-default-color" />
                       <span className="text-sm sm:text-base text-gray-700">
@@ -572,14 +605,18 @@ const HomePage = () => {
                     {
                       <button
                         onClick={() => {
-                          const input = document.createElement("input");
-                          input.type = "file";
-                          input.accept =
-                            ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
-                          input.multiple = true;
-                          input.onchange = (e) =>
-                            handleFileUpload(e.target.files);
-                          input.click();
+                          if (userState.isProfileUploaded) {
+                            const input = document.createElement("input");
+                            input.type = "file";
+                            input.accept =
+                              ".pdf,.doc,.docx,.txt,.json,.csv,.xlsx,.ppt,.pptx";
+                            input.multiple = true;
+                            input.onchange = (e) =>
+                              handleFileUpload(e.target.files);
+                            input.click();
+                          } else if (!userState.isLoggedIn) {
+                            setShowLogin(true);
+                          }
                           setIsAttachOpen(false);
                         }}
                         className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
@@ -596,13 +633,19 @@ const HomePage = () => {
 
                     <button
                       onClick={() => {
-                        const input = document.createElement("input");
-                        input.type = "file";
-                        input.accept = "image/*";
-                        input.multiple = true;
-                        input.onchange = (e) =>
-                          handleFileUpload(e.target.files);
-                        input.click();
+                        if (userState.isProfileUploaded) {
+                          const input = document.createElement("input");
+                          input.type = "file";
+                          input.accept = "image/*";
+                          input.multiple = true;
+                          input.onchange = (e) =>
+                            handleFileUpload(e.target.files);
+                          input.click();
+                        } else if (!userState.isLoggedIn) {
+                          setShowLogin(true);
+                        } else {
+                          setProfileWarningShow(true);
+                        }
                         setIsAttachOpen(false);
                       }}
                       className="flex items-center gap-3 w-full px-3 py-2 text-left hover:bg-gray-50 rounded-lg transition-colors"
