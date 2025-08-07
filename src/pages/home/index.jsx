@@ -43,7 +43,7 @@ const HomePage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isPrefOpen, setIsPrefOpen] = useState(false);
   const [isTopupOpen, setIsTopupOpen] = useState(false);
-  const [hitSubmit, setHitSubmit] = useState(false);
+  const [showLogin, setShowLogin] = useState(false);
 
   const handleFormSubmit = (data) => {
     console.log("Form submitted:", data);
@@ -111,7 +111,7 @@ const HomePage = () => {
   const sendMessage = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) return;
 
-    setHitSubmit(true); 
+    setShowLogin(true); 
 
     if(userState.isLoggedIn) {
 
@@ -396,7 +396,7 @@ const HomePage = () => {
                 </div>
               )}
 
-              {!useState.isLoggedIn && hitSubmit && <div className="text-red-600 font-semibold mb-2">
+              {!useState.isLoggedIn && showLogin && <div className="text-red-600 font-semibold mb-2">
                 Please login first.{" "}
                 <a
                   href="/login"
