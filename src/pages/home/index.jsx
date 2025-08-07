@@ -43,6 +43,7 @@ const HomePage = () => {
   const [isModalOpen, setModalOpen] = useState(false);
   const [isPrefOpen, setIsPrefOpen] = useState(false);
   const [isTopupOpen, setIsTopupOpen] = useState(false);
+  const [hitSubmit, setHitSubmit] = useState(false);
 
   const handleFormSubmit = (data) => {
     console.log("Form submitted:", data);
@@ -110,7 +111,11 @@ const HomePage = () => {
   const sendMessage = async () => {
     if (!inputText.trim() && attachedFiles.length === 0) return;
 
-    const newMessage = {
+    setHitSubmit(true); 
+
+    if(userState.isLoggedIn) {
+
+      const newMessage = {
       // id.now().toString(),
       text: inputText,
       isUser: true,
@@ -172,6 +177,9 @@ const HomePage = () => {
     } finally {
       setIsLoading(false);
     }
+
+    }
+
   };
 
   const generateFallbackResponse = (message) => {
@@ -388,6 +396,20 @@ const HomePage = () => {
                 </div>
               )}
 
+              {!useState.isLoggedIn && hitSubmit && <div className="text-red-600 font-semibold mb-2">
+                Please login first.{" "}
+                <a
+                  href="/login"
+                  className="underline text-red-700 hover:text-red-800"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsLoginOpen(true)
+                  }}
+                >
+                  Login
+                </a>
+              </div>}
+
               <div
                 className={cn(
                   "rounded-xl border transition-colors border-textbox-color"
@@ -453,7 +475,6 @@ const HomePage = () => {
                       variant="ghost"
                       size="icon"
                       className="w-auto px-3 py-2 sm:px-4 sm:py-2 rounded-lg hover:bg-gray-100 touch-manipulation flex items-center gap-2"
-                      
                       onClick={() =>
                         openModal({
                           title: "Preference",
@@ -548,7 +569,7 @@ const HomePage = () => {
                 <div className="p-4">
                   <h3 className="font-medium text-gray-900 mb-3">Profile</h3>
                   <div className="space-y-2">
-                    {(
+                    {
                       <button
                         onClick={() => {
                           const input = document.createElement("input");
@@ -571,7 +592,7 @@ const HomePage = () => {
                           <p className="text-xs text-gray-500">PDF, DOC</p>
                         </div>
                       </button>
-                    )}
+                    }
 
                     <button
                       onClick={() => {

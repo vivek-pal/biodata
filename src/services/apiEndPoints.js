@@ -1,17 +1,3 @@
-// PDF file upload	fileService	http://localhost/profile/v1/file/upload	POST	{cid:""} & token &attach
-// image upload	fileService	http://localhost/profile/v1/img/upload	POST	{cid:"",pid:""} & token &attach
-// retrieve PDF file	fileService	http://localhost/profile/v1/file/download/{cid}/{pid}/{fileid}	GET	/{cid}/{pid}/{fileid}
-// retrieve images	fileService	http://localhost/profile/v1/img/download{cid}/{pid}/{imgid}	GET	/{cid}/{pid}/{imgid}
-// getMasterData	fileService	http://localhost/profile/v1/temp/{template}	GET	profile/preference/tnc/contact/payment/price
-
-// retrieve profile	profileService	http://localhost/profile/v1/profile	GET	/{cid}/{pid} &token
-// Update/add Profile	profileService	http://localhost/profile/v1/profile	PUT	{mobile:'',cid:'',pid:'',profile:""}
-// Get Preferences	profileService	http://localhost/profile/v1/profile/preferences	Get	/{cid}/{pid} &token
-// Update/add preferences	profileService	http://localhost/profile/v1/profile/preferences	PUT	/{cid}/{pid} &token
-
-// Rag based chatting	llmService	http://localhost/llm/v1/chat/rag	POST	{cid:"",pid:"",message:"", lmessage:""}
-// normal chatting	llmService	http://localhost/llm/v1/chat/	POST	{cid:"",pid:"",message:"", lmessage:""}
-
 const endpoints = {
   pdfFileUploadService: {
     method: "post",
